@@ -1,0 +1,1352 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Generative adversarial networks (GANs) &#8212; A Primer on the Mathematical Foundations of Deep Learning</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+<link href="_static/styles/bootstrap.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=4ec06e9971c5264fbd345897d5258098f11cc577" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=796348d33e8b1d947c94">
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=796348d33e8b1d947c94">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=8bf782fb4ee92b3d3646425e50f299c4e1fd152d"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script type="application/vnd.jupyter.widget-state+json">{"state": {"73b70439240c45e38139f081848e0b10": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "b7868505a50c4626889d13c09f28a3e3": {"model_name": "ProgressStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "ProgressStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "bar_color": null, "description_width": ""}}, "91e05319ccf14ff2a39f0f6b3d51439b": {"model_name": "FloatProgressModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "FloatProgressModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "ProgressView", "bar_style": "success", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_73b70439240c45e38139f081848e0b10", "max": 8.0, "min": 0.0, "orientation": "horizontal", "style": "IPY_MODEL_b7868505a50c4626889d13c09f28a3e3", "value": 8.0}}, "48d9a7d31d2640288861e4a0fba37b99": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "c8080c7e48eb433ab288b77fac355068": {"model_name": "DescriptionStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "019fcdd3f5f545e8a4ef9688c0924835": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_48d9a7d31d2640288861e4a0fba37b99", "placeholder": "\u200b", "style": "IPY_MODEL_c8080c7e48eb433ab288b77fac355068", "value": "100%"}}, "5230359322cb49c3873377ed9c7181a4": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "ba69831cbd2a46f6aee06f160bba52cd": {"model_name": "DescriptionStyleModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "DescriptionStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "StyleView", "description_width": ""}}, "f405c42a5f3f473fa8110551b2616d7a": {"model_name": "HTMLModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HTMLModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HTMLView", "description": "", "description_tooltip": null, "layout": "IPY_MODEL_5230359322cb49c3873377ed9c7181a4", "placeholder": "\u200b", "style": "IPY_MODEL_ba69831cbd2a46f6aee06f160bba52cd", "value": " 8/8 [03:34&lt;00:00, 26.78s/it]"}}, "a05d6d965dbd418aaa049cafcf1ac3d0": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "1.2.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "1.2.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "1.2.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "overflow_x": null, "overflow_y": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "ad390375441f4c2392f58453fdc6cc3d": {"model_name": "HBoxModel", "model_module": "@jupyter-widgets/controls", "model_module_version": "1.5.0", "state": {"_dom_classes": [], "_model_module": "@jupyter-widgets/controls", "_model_module_version": "1.5.0", "_model_name": "HBoxModel", "_view_count": null, "_view_module": "@jupyter-widgets/controls", "_view_module_version": "1.5.0", "_view_name": "HBoxView", "box_style": "", "children": ["IPY_MODEL_019fcdd3f5f545e8a4ef9688c0924835", "IPY_MODEL_91e05319ccf14ff2a39f0f6b3d51439b", "IPY_MODEL_f405c42a5f3f473fa8110551b2616d7a"], "layout": "IPY_MODEL_a05d6d965dbd418aaa049cafcf1ac3d0"}}}, "version_major": 2, "version_minor": 0}</script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script crossorigin="anonymous" data-jupyter-widgets-cdn="https://cdn.jsdelivr.net/npm/" src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '10_GANs';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Score-based models" href="11_diffusion_models.html" />
+    <link rel="prev" title="Variational autoencoders" href="09_variational_autoencoder.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="docsearch:language" content="None">
+  </head>
+  
+  
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="180" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  
+  <input type="checkbox" class="sidebar-toggle" name="__primary" id="__primary">
+  <label class="overlay overlay-primary" for="__primary"></label>
+
+  
+  <input type="checkbox" class="sidebar-toggle" name="__secondary" id="__secondary">
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+      
+<form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+    </div>
+  </div>
+
+  
+  <nav class="bd-header navbar navbar-expand-lg bd-navbar" id="navbar-main"><div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+      <span class="fa-solid fa-bars"></span>
+  </label>
+  <div id="navbar-start">
+    
+    
+  
+
+
+<a class="navbar-brand logo" href="intro.html">
+
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <img src="_static/logo.png" class="logo__image only-light" alt="Logo image">
+    <img src="_static/logo.png" class="logo__image only-dark" alt="Logo image">
+  
+  
+</a>
+    
+  </div>
+
+  
+  <div class="col-lg-9 navbar-header-items">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="00_the_mlp.html">
+                        The multilayer perceptron
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="01_mlp_universal_approx.html">
+                        The multilayer perceptron, a universal approximator
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="02_deep_vs_shallow.html">
+                        Deep vs shallow
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="03_sgd_and_bias_variance.html">
+                        SGD guarantees & the bias–variance trade-off
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="04_invariance_robustness.html">
+                        Invariance & robustness
+                      </a>
+                    </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="05_equivariance_and_cnns.html">
+                        Equivariance & convolutional neural networks
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="06_loss_landscape_normalization_resnets.html">
+                        The loss landscape: Normalization & Residual Networks
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="07_input_convex_neural_nets.html">
+                        Input-convex neural networks
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="08_autoencoder.html">
+                        Autoencoders
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="09_variational_autoencoder.html">
+                        Variational autoencoders
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="#">
+                        Generative adversarial networks (GANs)
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="11_diffusion_models.html">
+                        Score-based models
+                      </a>
+                    </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+        <div class="navbar-end-item navbar-persistent--container">
+          
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+        </div>
+      
+      
+      <div class="navbar-end-item">
+        <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+</button>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+
+
+  
+  
+    <div class="navbar-persistent--mobile">
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+    </div>
+  
+
+  
+  <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+  </label>
+  
+
+</div>
+  </nav>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+      
+      <div class="navbar-center-item">
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="00_the_mlp.html">
+                        The multilayer perceptron
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="01_mlp_universal_approx.html">
+                        The multilayer perceptron, a universal approximator
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="02_deep_vs_shallow.html">
+                        Deep vs shallow
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="03_sgd_and_bias_variance.html">
+                        SGD guarantees & the bias–variance trade-off
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="04_invariance_robustness.html">
+                        Invariance & robustness
+                      </a>
+                    </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="05_equivariance_and_cnns.html">
+                        Equivariance & convolutional neural networks
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="06_loss_landscape_normalization_resnets.html">
+                        The loss landscape: Normalization & Residual Networks
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="07_input_convex_neural_nets.html">
+                        Input-convex neural networks
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="08_autoencoder.html">
+                        Autoencoders
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="09_variational_autoencoder.html">
+                        Variational autoencoders
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="#">
+                        Generative adversarial networks (GANs)
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="11_diffusion_models.html">
+                        Score-based models
+                      </a>
+                    </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
+      </div>
+      
+      </div>
+    
+
+    
+    
+    <div class="sidebar-header-items__end">
+      
+      <div class="navbar-end-item">
+        <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+</button>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+    
+  </div>
+
+  
+  <div class="sidebar-start-items sidebar-primary__section">
+    <div class="sidebar-start-items__item">
+  
+
+
+<a class="navbar-brand logo" href="intro.html">
+
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <img src="_static/logo.png" class="logo__image only-light" alt="Logo image">
+    <img src="_static/logo.png" class="logo__image only-dark" alt="Logo image">
+  
+  
+</a>
+    </div>
+    <div class="sidebar-start-items__item">
+<form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+    </div>
+    <div class="sidebar-start-items__item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    A Primer on the Mathematical Foundations of Deep Learning
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="00_the_mlp.html">The multilayer perceptron</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_mlp_universal_approx.html">The multilayer perceptron, a universal approximator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_deep_vs_shallow.html">Deep vs shallow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_sgd_and_bias_variance.html">SGD guarantees &amp; the bias–variance trade-off</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_invariance_robustness.html">Invariance &amp; robustness</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_equivariance_and_cnns.html">Equivariance &amp; convolutional neural networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_loss_landscape_normalization_resnets.html">The loss landscape: Normalization &amp; Residual Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_input_convex_neural_nets.html">Input-convex neural networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_autoencoder.html">Autoencoders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_variational_autoencoder.html">Variational autoencoders</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Generative adversarial networks (GANs)</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="11_diffusion_models.html">Score-based models</a></li>
+</ul>
+
+    </div>
+</nav>
+    </div>
+  </div>
+  
+
+  
+  <div class="sidebar-end-items sidebar-primary__section">
+    <div class="sidebar-end-items__item">
+    </div>
+  </div>
+
+  
+  <div id="rtd-footer-container"></div>
+
+      </div>
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+        <div class="bd-content">
+          <div class="bd-article-container">
+            
+            <div class="bd-header-article">
+                
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        <label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" data-toggle="tooltip" data-placement="right" title="Toggle primary sidebar">
+            <span class="fa-solid fa-bars"></span>
+        </label>
+    </div>
+    <div class="header-article__right">
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      <li><a href="https://colab.research.google.com/v2/gh/sdittmer/mathematical_foundations_of_deep_learning/master?urlpath=tree/docs/10_GANs.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="btn__text-container">Binder</span>
+</a>
+</a>
+      
+  </ul>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      <li><a href="_sources/10_GANs.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</a>
+      
+      <li>
+<button onclick="printPdf(this)"
+  class="btn btn-sm dropdown-item"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</a>
+      
+  </ul>
+</div>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary" data-toggle="tooltip" data-placement="left" title="Toggle secondary sidebar">
+            <span class="fa-solid fa-list"></span>
+        </label>
+    </div>
+</div>
+            </div>
+            
+            
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Generative adversarial networks (GANs)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   Generative adversarial networks (GANs)
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#different-distances">
+     Different distances
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#original-gan-2014-paper">
+       Original GAN (2014 paper)
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#wasserstein-gan-wgan-2017-paper">
+       Wasserstein GAN (WGAN) (2017 paper)
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#gan-training">
+     GAN training
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#examples">
+       Examples
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exceptions">
+     Exceptions
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#least-squares-gan-2017-paper">
+       Least squares GAN (2017 paper)
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#hinge-loss-gan-2017-paper">
+       Hinge loss GAN (2017 paper)
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#example-of-a-gan-training">
+     Example of a GAN training
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#gans-vs-vaes">
+     GANs vs VAEs
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#pro-gans">
+       Pro GANs
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#pro-vaes">
+       PRO VAEs
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#exercises">
+   Exercises
+  </a>
+ </li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+            <article class="bd-article" role="main">
+              
+  <section class="tex2jax_ignore mathjax_ignore" id="generative-adversarial-networks-gans">
+<h1>Generative adversarial networks (GANs)<a class="headerlink" href="#generative-adversarial-networks-gans" title="Permalink to this headline">#</a></h1>
+<p>Let <span class="math notranslate nohighlight">\(\mathcal{D}=\{x_i\}_{i=1}^N\subset X = \mathbb{R}^n\)</span> be a dataset we want to be able to “mimic” samples from.</p>
+<p>Neural networks:</p>
+<ul class="simple">
+<li><p>Let <span class="math notranslate nohighlight">\(D : X \to \mathbb{R}\)</span> be a neural net, the so called discriminator.</p></li>
+<li><p>Let <span class="math notranslate nohighlight">\(G : Z = \mathbb{R}^m \to X\)</span> be a neural net, the so called generator.</p></li>
+</ul>
+<p>Probability distributions:</p>
+<ul class="simple">
+<li><p>Let <span class="math notranslate nohighlight">\(p_X\)</span> be the distibution that generated <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>’s samples.</p></li>
+<li><p>Let <span class="math notranslate nohighlight">\(p_G\)</span> be the distibution that we generate if we apply <span class="math notranslate nohighlight">\(G\)</span> to samples from <span class="math notranslate nohighlight">\(\mathcal{N}(0, \mathbb{1}_k)\)</span>.</p>
+<ul>
+<li><p>I.e., we can sample <span class="math notranslate nohighlight">\(\hat x \sim p_G\)</span> by sampling <span class="math notranslate nohighlight">\(z\sim\mathcal{N}(0, \mathbb{1})\)</span> and computing <span class="math notranslate nohighlight">\(G(z)\)</span>.</p></li>
+</ul>
+</li>
+</ul>
+<p>The goal is that we train <span class="math notranslate nohighlight">\(G\)</span> such that we approximate</p>
+<div class="math notranslate nohighlight">
+\[p_X = p_G.\]</div>
+<ul class="simple">
+<li><p>Idea: pick some distance measure <span class="math notranslate nohighlight">\(d\)</span> between probabiltiy distributions and try to find a <span class="math notranslate nohighlight">\(G\)</span> that “solve”</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\min_G d(p_X, p_G).\]</div>
+<ul class="simple">
+<li><p>In practice it is hard to compute these distances for general probability distributions.</p>
+<ul>
+<li><p>We saw an exception with the KL-divergences between Gaussians in the case of VAEs.</p></li>
+</ul>
+</li>
+</ul>
+<section id="different-distances">
+<h2>Different distances<a class="headerlink" href="#different-distances" title="Permalink to this headline">#</a></h2>
+<section id="original-gan-2014-paper">
+<h3>Original GAN (2014 <a class="reference external" href="https://arxiv.org/abs/1406.2661">paper</a>)<a class="headerlink" href="#original-gan-2014-paper" title="Permalink to this headline">#</a></h3>
+<p>The original GAN used the Jensen–Shannon divergence.</p>
+<p>If we assume a function <span class="math notranslate nohighlight">\(D:X\to [0,1]\)</span>, we can define the JS divergence as</p>
+<div class="math notranslate nohighlight">
+\[d(p_X, p_G) = \max_D \mathbb{E}_{x\sim p_X} \log D(x) + \mathbb{E}_{\hat x\sim p_G} \log\left[1- D(\hat x)\right].\]</div>
+<p>We can view <span class="math notranslate nohighlight">\(D\)</span> as a BCE classifier that tires to predict whether a sample is “real” or generated.
+I.e., <span class="math notranslate nohighlight">\(D\)</span> should have high values for real <span class="math notranslate nohighlight">\(x\)</span> – this is the case for all GANs, except the Wasserstein GAN.</p>
+</section>
+<section id="wasserstein-gan-wgan-2017-paper">
+<h3>Wasserstein GAN (WGAN) (2017 <a class="reference external" href="https://arxiv.org/abs/1701.07875">paper</a>)<a class="headerlink" href="#wasserstein-gan-wgan-2017-paper" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p>Uses the Wasserstein distance.</p></li>
+<li><p>Defined via a 1-Lipschitz <span class="math notranslate nohighlight">\(D:X\to \mathbb{R}\)</span> as</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[d(p_X, p_G) = \max_D \mathbb{E}_{x\sim p_G} D(X) - \mathbb{E}_{x\sim p_X} D(X).\]</div>
+<ul class="simple">
+<li><p>Here the discriminator is often called a “critic.”</p></li>
+</ul>
+</section>
+</section>
+<section id="gan-training">
+<h2>GAN training<a class="headerlink" href="#gan-training" title="Permalink to this headline">#</a></h2>
+<ul class="simple">
+<li><p>One needs to solve a minimax problem/game. E.g., for the JS divergence</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\min_G d(p_X, p_G) = \min_G \max_D \mathbb{E}_{x\sim p_X} \log D(x) + \mathbb{E}_{z\sim \mathcal{N}(0,\mathbb{1})} \log\left[1- D(G(z))\right].\]</div>
+<ul class="simple">
+<li><p>Often a tricky and unstable process.</p></li>
+<li><p>Usual approach:</p>
+<ol class="arabic simple">
+<li><p>SGD step on <span class="math notranslate nohighlight">\(D\)</span>’s  parameters via <span class="math notranslate nohighlight">\(L_D\)</span>.</p></li>
+<li><p>SGD step on <span class="math notranslate nohighlight">\(G\)</span>’s parameters via <span class="math notranslate nohighlight">\(L_G\)</span>.</p></li>
+<li><p>Go to 3 unless happy with training result.</p></li>
+</ol>
+</li>
+</ul>
+<p>I.e., we pin <span class="math notranslate nohighlight">\(D\)</span> and <span class="math notranslate nohighlight">\(G\)</span> against each other in a minimax game.</p>
+<section id="examples">
+<h3>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">#</a></h3>
+<p>For the <strong>JS divergence</strong> we have</p>
+<div class="math notranslate nohighlight">
+\[L_D = -\mathbb{E}_{x\sim p_X} \log D(x) - \mathbb{E}_{z\sim \mathcal{N}(0,\mathbb{1})} \log\left[1- D(G(z))\right]\]</div>
+<p>and</p>
+<div class="math notranslate nohighlight">
+\[L_G = \mathbb{E}_{z\sim \mathcal{N}(0,\mathbb{1})} \log\left[1- D(G(z))\right].\]</div>
+<p>For the <strong>WGAN</strong> we define</p>
+<div class="math notranslate nohighlight">
+\[L_D = \mathbb{E}_{x\sim p_X} D(x) - \mathbb{E}_{z\sim \mathcal{N}(0,\mathbb{1})} D(G(z)) + \lambda \mathbb{E}_{z\sim \mathcal{N}(0,\mathbb{1}), x\sim p_X, \alpha\sim U[0, 1]} \text{ReLU}\left(\|(\nabla D)(\alpha x + (1-\alpha)G(z))\|_2^2 - 1\right)^2\]</div>
+<p>and</p>
+<div class="math notranslate nohighlight">
+\[L_G = \mathbb{E}_{z\sim \mathcal{N}(0,\mathbb{1})} D(G(z)).\]</div>
+<p>I.e., for the WGAN’s <span class="math notranslate nohighlight">\(L_D\)</span> we add a penalty term that encourages the norm of the gradient of <span class="math notranslate nohighlight">\(D\)</span> with respect to its input to not exceed <span class="math notranslate nohighlight">\(1\)</span>. This encourages the <span class="math notranslate nohighlight">\(1\)</span>-Lipschitz condition to be meet sufficiently for the optimization to work.</p>
+</section>
+</section>
+<section id="exceptions">
+<h2>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">#</a></h2>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\exists\)</span> GANs that are exceptions to the distance formulation.</p>
+<ul>
+<li><p>I.e., <span class="math notranslate nohighlight">\(D\)</span> and <span class="math notranslate nohighlight">\(G\)</span> have irreconcilable losses.</p></li>
+</ul>
+</li>
+<li><p>But conceptually they tend to be close the distance formulation.</p></li>
+</ul>
+<section id="least-squares-gan-2017-paper">
+<h3>Least squares GAN (2017 <a class="reference external" href="https://arxiv.org/abs/1611.04076">paper</a>)<a class="headerlink" href="#least-squares-gan-2017-paper" title="Permalink to this headline">#</a></h3>
+<p>Here we have <span class="math notranslate nohighlight">\(D:X\to \mathbb{R}\)</span> or at least <span class="math notranslate nohighlight">\(D:X\to [-1,1]\)</span> and</p>
+<div class="math notranslate nohighlight">
+\[L_D = \mathbb{E}_{x\sim p_X} (D(x) - b)^2 + \mathbb{E}_{z\sim \mathcal{N}(0,\mathbb{1})} (D(G(z)) - a)^2\]</div>
+<p>and</p>
+<div class="math notranslate nohighlight">
+\[L_G = \mathbb{E}_{z\sim \mathcal{N}(0,\mathbb{1})} (D(G(z)) - c)^2\]</div>
+<p>with <span class="math notranslate nohighlight">\(a=-1\)</span>, <span class="math notranslate nohighlight">\(b=1\)</span>, and <span class="math notranslate nohighlight">\(c=0\)</span>.</p>
+</section>
+<section id="hinge-loss-gan-2017-paper">
+<h3>Hinge loss GAN (2017 <a class="reference external" href="https://arxiv.org/abs/1705.02894">paper</a>)<a class="headerlink" href="#hinge-loss-gan-2017-paper" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p>Note: Also called geometric GAN.</p></li>
+</ul>
+<p>Here we have</p>
+<div class="math notranslate nohighlight">
+\[L_D = -\mathbb{E}_{x\sim p_X} \min(0, D(x) - 1) - \mathbb{E}_{z\sim \mathcal{N}(0,\mathbb{1})} \min(0, -(D(x) + 1))\]</div>
+<p>and</p>
+<div class="math notranslate nohighlight">
+\[L_G = -\mathbb{E}_{z\sim \mathcal{N}(0,\mathbb{1})} D(G(z)).\]</div>
+</section>
+</section>
+<section id="example-of-a-gan-training">
+<h2>Example of a GAN training<a class="headerlink" href="#example-of-a-gan-training" title="Permalink to this headline">#</a></h2>
+<p>We first load MNIST as our training data and write some boilerplate code.</p>
+<div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">from</span> <span class="nn">torchvision.datasets</span> <span class="kn">import</span> <span class="n">MNIST</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="nn">torchvision.transforms</span> <span class="kn">import</span> <span class="n">ToTensor</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">tqdm.notebook</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;matplotlib.font_manager&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">disabled</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xkcd</span><span class="p">()</span>
+
+<span class="n">train_data</span> <span class="o">=</span> <span class="n">MNIST</span><span class="p">(</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="s1">&#39;datasets&#39;</span><span class="p">,</span>
+    <span class="n">train</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">ToTensor</span><span class="p">(),</span>
+    <span class="n">download</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Training data shape: </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">train_data</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Training data shape: (60000, 28, 28)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">batch_size</span> <span class="o">=</span> <span class="mi">128</span>
+
+<span class="n">data_loader_train</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
+    <span class="n">train_data</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+    <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot_first8_images</span><span class="p">(</span><span class="n">xs</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">xs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">([])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">([])</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">plot_losses</span><span class="p">(</span><span class="n">losses_D</span><span class="p">,</span> <span class="n">losses_G</span><span class="p">):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">losses_D</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;losses_D&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">losses_G</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;losses_G&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">UnFlatten</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">shape</span>
+
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">xs</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<p>We initalize some simple networks for <span class="math notranslate nohighlight">\(G\)</span> and <span class="math notranslate nohighlight">\(D\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">G</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">8</span><span class="o">*</span><span class="mi">7</span><span class="o">*</span><span class="mi">7</span><span class="p">),</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+    <span class="n">UnFlatten</span><span class="p">([</span><span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">]),</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">normalized_shape</span><span class="o">=</span><span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">]),</span>
+
+    <span class="n">nn</span><span class="o">.</span><span class="n">UpsamplingNearest2d</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">[</span><span class="mi">14</span><span class="p">,</span> <span class="mi">14</span><span class="p">]),</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">in_channels</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">out_channels</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">normalized_shape</span><span class="o">=</span><span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">14</span><span class="p">]),</span>
+
+    <span class="n">nn</span><span class="o">.</span><span class="n">UpsamplingNearest2d</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">[</span><span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">]),</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">in_channels</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">out_channels</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">normalized_shape</span><span class="o">=</span><span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">]),</span>
+
+    <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">in_channels</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">out_channels</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">normalized_shape</span><span class="o">=</span><span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">]),</span>
+
+    <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">in_channels</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">out_channels</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">Sigmoid</span><span class="p">(),</span>
+<span class="p">)</span>
+
+<span class="n">D</span> <span class="o">=</span>  <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">in_channels</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">out_channels</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">MaxPool2d</span><span class="p">(</span><span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">normalized_shape</span><span class="o">=</span><span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">14</span><span class="p">,</span> <span class="mi">14</span><span class="p">]),</span>
+
+    <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">in_channels</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">out_channels</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">MaxPool2d</span><span class="p">(</span><span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">normalized_shape</span><span class="o">=</span><span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">]),</span>
+
+    <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">in_channels</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">out_channels</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">MaxPool2d</span><span class="p">(</span><span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">normalized_shape</span><span class="o">=</span><span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">]),</span>
+
+    <span class="n">nn</span><span class="o">.</span><span class="n">Flatten</span><span class="p">(),</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">16</span><span class="o">*</span><span class="mi">4</span><span class="o">*</span><span class="mi">4</span><span class="p">,</span> <span class="mi">64</span><span class="p">),</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+
+    <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">normalized_shape</span><span class="o">=</span><span class="p">[</span><span class="mi">64</span><span class="p">]),</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">(),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We use the Least Squres losses.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">LD_LS</span><span class="p">(</span><span class="n">D</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">x_hat</span><span class="p">,</span> <span class="n">a</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="n">losses</span> <span class="o">=</span> <span class="p">(</span><span class="n">D</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">D</span><span class="p">(</span><span class="n">x_hat</span><span class="p">)</span> <span class="o">-</span> <span class="n">a</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+    <span class="k">return</span> <span class="n">losses</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">LG_LS</span><span class="p">(</span><span class="n">D</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">x_hat</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="n">losses</span> <span class="o">=</span> <span class="p">(</span><span class="n">D</span><span class="p">(</span><span class="n">x_hat</span><span class="p">)</span> <span class="o">-</span> <span class="n">c</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+    <span class="k">return</span> <span class="n">losses</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We inialize some objects for the training. We use Adam with a lower than usual first momentum, to smooth the training by making it slower.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">β1</span><span class="p">,</span> <span class="n">β2</span> <span class="o">=</span> <span class="mf">.9</span><span class="p">,</span> <span class="mf">.999</span>
+<span class="n">optimizer_D</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">D</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">betas</span><span class="o">=</span><span class="p">(</span><span class="n">β1</span><span class="p">,</span> <span class="n">β2</span><span class="p">))</span>
+<span class="n">optimizer_G</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">betas</span><span class="o">=</span><span class="p">(</span><span class="n">β1</span><span class="p">,</span> <span class="n">β2</span><span class="p">))</span>
+
+<span class="n">n_epochs</span> <span class="o">=</span> <span class="mi">8</span>
+
+<span class="n">losses_D_train</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">losses_G_train</span> <span class="o">=</span> <span class="p">[]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We train <span class="math notranslate nohighlight">\(G\)</span> and <span class="math notranslate nohighlight">\(D\)</span> and plot the intermediate results.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_epochs</span><span class="p">)):</span>
+    <span class="n">D</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+    <span class="n">G</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span> <span class="ow">in</span> <span class="n">data_loader_train</span><span class="p">:</span>
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
+
+        <span class="n">zs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
+        <span class="n">xs_hat</span> <span class="o">=</span> <span class="n">G</span><span class="p">(</span><span class="n">zs</span><span class="p">)</span>
+
+
+        <span class="n">loss_D</span> <span class="o">=</span> <span class="n">LD_LS</span><span class="p">(</span><span class="n">D</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">xs_hat</span><span class="p">)</span>
+        <span class="n">losses_D_train</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss_D</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+
+        <span class="n">optimizer_D</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">loss_D</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">retain_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">optimizer_D</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+
+        <span class="n">loss_G</span> <span class="o">=</span> <span class="n">LG_LS</span><span class="p">(</span><span class="n">D</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">xs_hat</span><span class="p">)</span>
+        <span class="n">losses_G_train</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss_G</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+
+        <span class="n">optimizer_G</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">loss_G</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="n">optimizer_G</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;After epoch </span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+    <span class="n">plot_losses</span><span class="p">(</span><span class="n">losses_D_train</span><span class="p">,</span> <span class="n">losses_G_train</span><span class="p">)</span>
+    <span class="n">plot_first8_images</span><span class="p">(</span><span class="n">xs_hat</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<script type="application/vnd.jupyter.widget-view+json">{"version_major": 2, "version_minor": 0, "model_id": "ad390375441f4c2392f58453fdc6cc3d"}</script><div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>After epoch 0:
+</pre></div>
+</div>
+<img alt="_images/94d3c78b44589db2322eb045596fa2cc484fba7c5d2888ed3723c4bb5ead82ff.png" src="_images/94d3c78b44589db2322eb045596fa2cc484fba7c5d2888ed3723c4bb5ead82ff.png" />
+<img alt="_images/a428ccccd59ef82db27567701bbc64e1d4680949a8e474dac9a2bd056cb94c15.png" src="_images/a428ccccd59ef82db27567701bbc64e1d4680949a8e474dac9a2bd056cb94c15.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>After epoch 1:
+</pre></div>
+</div>
+<img alt="_images/cb14d7e562dec6bc0e8ccc05200cdb0bc6b5bb0f130c494d9b5dad1a6324e194.png" src="_images/cb14d7e562dec6bc0e8ccc05200cdb0bc6b5bb0f130c494d9b5dad1a6324e194.png" />
+<img alt="_images/771f190ede8b3753b9d573eb9780195dc2e41ab822735a681c7ae63de0d9ee2f.png" src="_images/771f190ede8b3753b9d573eb9780195dc2e41ab822735a681c7ae63de0d9ee2f.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>After epoch 2:
+</pre></div>
+</div>
+<img alt="_images/2430491ef02b4b707a12c0feff2af72160d0a7a5bfe61d4955dfda80b6775bcf.png" src="_images/2430491ef02b4b707a12c0feff2af72160d0a7a5bfe61d4955dfda80b6775bcf.png" />
+<img alt="_images/940b861e946ea77f8e95d88a75d4dafc4d997e6fa57fa51701bfd730c5d775d7.png" src="_images/940b861e946ea77f8e95d88a75d4dafc4d997e6fa57fa51701bfd730c5d775d7.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>After epoch 3:
+</pre></div>
+</div>
+<img alt="_images/f8e658ef53e6d76f3440ac33a4bc62403627858db84186b17b4040bc9f6243f0.png" src="_images/f8e658ef53e6d76f3440ac33a4bc62403627858db84186b17b4040bc9f6243f0.png" />
+<img alt="_images/e05ee83eaa39d6b4c533792676a930563d0af10dfd8a91529638c5ad19ee3285.png" src="_images/e05ee83eaa39d6b4c533792676a930563d0af10dfd8a91529638c5ad19ee3285.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>After epoch 4:
+</pre></div>
+</div>
+<img alt="_images/597e29f34c16a4c919ee8ce0220322209858d93d4a1584190f751d6bbca80ff8.png" src="_images/597e29f34c16a4c919ee8ce0220322209858d93d4a1584190f751d6bbca80ff8.png" />
+<img alt="_images/fa55ef2eac0fa8d3d9840d0b92f5459faf77ef7c2354b80cdb06e26f953f356f.png" src="_images/fa55ef2eac0fa8d3d9840d0b92f5459faf77ef7c2354b80cdb06e26f953f356f.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>After epoch 5:
+</pre></div>
+</div>
+<img alt="_images/2f75b1bdf8ab36b7d977dbbbafb1a531f685d5394be4c9e1dbfd384172cf39a9.png" src="_images/2f75b1bdf8ab36b7d977dbbbafb1a531f685d5394be4c9e1dbfd384172cf39a9.png" />
+<img alt="_images/9925a1a5585a0d8ace89b44966910beb62723ff874d8a3f0e9eb15cffff57068.png" src="_images/9925a1a5585a0d8ace89b44966910beb62723ff874d8a3f0e9eb15cffff57068.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>After epoch 6:
+</pre></div>
+</div>
+<img alt="_images/59128f7d82e2e11905f2a79a14fa701608d13f0449a60fc0ae3074571e3a8040.png" src="_images/59128f7d82e2e11905f2a79a14fa701608d13f0449a60fc0ae3074571e3a8040.png" />
+<img alt="_images/ac54d039bc097d55ef2e96cfd4ea5d9781511a6cb031b68493404a8c6eddcd07.png" src="_images/ac54d039bc097d55ef2e96cfd4ea5d9781511a6cb031b68493404a8c6eddcd07.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>After epoch 7:
+</pre></div>
+</div>
+<img alt="_images/14299a5e27944fa9150a9008ec6e437171396dcd7b3ae0f6c85b590fcccd2b9a.png" src="_images/14299a5e27944fa9150a9008ec6e437171396dcd7b3ae0f6c85b590fcccd2b9a.png" />
+<img alt="_images/f69fe60cae3d689ce92a2db9c02163aa0ea1b02d3c156be3ca5e3c56c7bfb6c9.png" src="_images/f69fe60cae3d689ce92a2db9c02163aa0ea1b02d3c156be3ca5e3c56c7bfb6c9.png" />
+</div>
+</div>
+</section>
+<section id="gans-vs-vaes">
+<h2>GANs vs VAEs<a class="headerlink" href="#gans-vs-vaes" title="Permalink to this headline">#</a></h2>
+<section id="pro-gans">
+<h3>Pro GANs<a class="headerlink" href="#pro-gans" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p>In general they tend to produce nicer results as VAEs.</p></li>
+<li><p>There are not only also conditioned GANs, but many other types of GANs. GANs seem to be easier to modify to non- standard settings. See, e.g., <a class="reference external" href="https://arxiv.org/abs/1703.10593">cycle GANs</a>.</p></li>
+</ul>
+</section>
+<section id="pro-vaes">
+<h3>PRO VAEs<a class="headerlink" href="#pro-vaes" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p>GAN loss curves are not as nice and interpretable as for previous models. (Exercise explain why.)</p></li>
+<li><p>VAEs are easier and more stable to train.</p></li>
+<li><p>GANs can suffer from “mode collapse.” E.g., stops producing the digit 3 in our example. I.e., some part of the data distribution is no longer represented.</p></li>
+</ul>
+</section>
+</section>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="exercises">
+<h1>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h1>
+<ul class="simple">
+<li><p>Change the implementation above from the Least Squares GAN to the original GAN setting.</p>
+<ol class="arabic simple">
+<li><p>Write the loss functions <code class="docutils literal notranslate"><span class="pre">LD_JS</span></code> and <code class="docutils literal notranslate"><span class="pre">LG_JS</span></code>.</p></li>
+<li><p>Change the last line of the model <span class="math notranslate nohighlight">\(D\)</span> in an appropriate way.</p></li>
+<li><p>The original GAN is more unstable to train than the Least Squares GAN. To adjust for that set <code class="docutils literal notranslate"><span class="pre">β1</span> <span class="pre">=</span> <span class="pre">0.5</span></code>. This decreases the so called second momentum of the Adam optimizer. This will make the training slower but more stable.</p></li>
+</ol>
+</li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">LD_JS</span><span class="p">(</span><span class="n">D</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">x_hat</span><span class="p">):</span>
+    <span class="n">losses</span> <span class="o">=</span> <span class="o">-</span> <span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">D</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">-</span> <span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">D</span><span class="p">(</span><span class="n">x_hat</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">losses</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">LG_JS</span><span class="p">(</span><span class="n">D</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">x_hat</span><span class="p">):</span>
+    <span class="n">losses</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">D</span><span class="p">(</span><span class="n">x_hat</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">losses</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<ul class="simple">
+<li><p>Not all divergences are symmetic, prove that the JS divergence is.</p></li>
+<li><p>The function <span class="math notranslate nohighlight">\(D\)</span> is ususally called discriminator. Why might it be called critic for the WGAN?</p></li>
+<li><p>Explain why the loss curves are no longer as interpretable as for previous models.</p></li>
+</ul>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+            </article>
+            
+
+            
+            
+            <footer class="bd-footer-article">
+                <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+  <a class='left-prev' id="prev-link" href="09_variational_autoencoder.html" title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+          <p class="prev-next-subtitle">previous</p>
+          <p class="prev-next-title">Variational autoencoders</p>
+      </div>
+  </a>
+  <a class='right-next' id="next-link" href="11_diffusion_models.html" title="next page">
+  <div class="prev-next-info">
+      <p class="prev-next-subtitle">next</p>
+      <p class="prev-next-title">Score-based models</p>
+  </div>
+  <i class="fa-solid fa-angle-right"></i>
+  </a>
+</div>
+            </footer>
+            
+          </div>
+          
+          
+          
+            <div class="bd-sidebar-secondary bd-toc">
+              
+<div class="toc-item">
+  
+<div class="tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+</div>
+<nav id="bd-toc-nav" class="page-toc">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   Generative adversarial networks (GANs)
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#different-distances">
+     Different distances
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#original-gan-2014-paper">
+       Original GAN (2014 paper)
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#wasserstein-gan-wgan-2017-paper">
+       Wasserstein GAN (WGAN) (2017 paper)
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#gan-training">
+     GAN training
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#examples">
+       Examples
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exceptions">
+     Exceptions
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#least-squares-gan-2017-paper">
+       Least squares GAN (2017 paper)
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#hinge-loss-gan-2017-paper">
+       Hinge loss GAN (2017 paper)
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#example-of-a-gan-training">
+     Example of a GAN training
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#gans-vs-vaes">
+     GANs vs VAEs
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#pro-gans">
+       Pro GANs
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#pro-vaes">
+       PRO VAEs
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#exercises">
+   Exercises
+  </a>
+ </li>
+</ul>
+
+</nav>
+</div>
+
+            </div>
+          
+          
+        </div>
+        <footer class="bd-footer-content">
+          <div class="bd-footer-content__inner">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Sören Dittmer
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+<p class="copyright">
+
+    &copy; Copyright 2022.<br>
+
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+Last updated on None.<br>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </div>
+        </footer>
+        
+
+      </main>
+    </div>
+  </div>
+
+  
+    
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=796348d33e8b1d947c94"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=796348d33e8b1d947c94"></script>
+
+  </body>
+</html>

@@ -1,0 +1,1191 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Input-convex neural networks &#8212; A Primer on the Mathematical Foundations of Deep Learning</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+<link href="_static/styles/bootstrap.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=4ec06e9971c5264fbd345897d5258098f11cc577" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=796348d33e8b1d947c94">
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=796348d33e8b1d947c94">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=8bf782fb4ee92b3d3646425e50f299c4e1fd152d"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '07_input_convex_neural_nets';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Autoencoders" href="08_autoencoder.html" />
+    <link rel="prev" title="The loss landscape: Normalization &amp; Residual Networks" href="06_loss_landscape_normalization_resnets.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="docsearch:language" content="None">
+  </head>
+  
+  
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="180" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  
+  <input type="checkbox" class="sidebar-toggle" name="__primary" id="__primary">
+  <label class="overlay overlay-primary" for="__primary"></label>
+
+  
+  <input type="checkbox" class="sidebar-toggle" name="__secondary" id="__secondary">
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+      
+<form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+    </div>
+  </div>
+
+  
+  <nav class="bd-header navbar navbar-expand-lg bd-navbar" id="navbar-main"><div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+      <span class="fa-solid fa-bars"></span>
+  </label>
+  <div id="navbar-start">
+    
+    
+  
+
+
+<a class="navbar-brand logo" href="intro.html">
+
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <img src="_static/logo.png" class="logo__image only-light" alt="Logo image">
+    <img src="_static/logo.png" class="logo__image only-dark" alt="Logo image">
+  
+  
+</a>
+    
+  </div>
+
+  
+  <div class="col-lg-9 navbar-header-items">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="00_the_mlp.html">
+                        The multilayer perceptron
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="01_mlp_universal_approx.html">
+                        The multilayer perceptron, a universal approximator
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="02_deep_vs_shallow.html">
+                        Deep vs shallow
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="03_sgd_and_bias_variance.html">
+                        SGD guarantees & the bias–variance trade-off
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="04_invariance_robustness.html">
+                        Invariance & robustness
+                      </a>
+                    </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="05_equivariance_and_cnns.html">
+                        Equivariance & convolutional neural networks
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="06_loss_landscape_normalization_resnets.html">
+                        The loss landscape: Normalization & Residual Networks
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="#">
+                        Input-convex neural networks
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="08_autoencoder.html">
+                        Autoencoders
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="09_variational_autoencoder.html">
+                        Variational autoencoders
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="10_GANs.html">
+                        Generative adversarial networks (GANs)
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="11_diffusion_models.html">
+                        Score-based models
+                      </a>
+                    </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+        <div class="navbar-end-item navbar-persistent--container">
+          
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+        </div>
+      
+      
+      <div class="navbar-end-item">
+        <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+</button>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+
+
+  
+  
+    <div class="navbar-persistent--mobile">
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+    </div>
+  
+
+  
+  <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+  </label>
+  
+
+</div>
+  </nav>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+      
+      <div class="navbar-center-item">
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="00_the_mlp.html">
+                        The multilayer perceptron
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="01_mlp_universal_approx.html">
+                        The multilayer perceptron, a universal approximator
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="02_deep_vs_shallow.html">
+                        Deep vs shallow
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="03_sgd_and_bias_variance.html">
+                        SGD guarantees & the bias–variance trade-off
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="04_invariance_robustness.html">
+                        Invariance & robustness
+                      </a>
+                    </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="05_equivariance_and_cnns.html">
+                        Equivariance & convolutional neural networks
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="06_loss_landscape_normalization_resnets.html">
+                        The loss landscape: Normalization & Residual Networks
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="#">
+                        Input-convex neural networks
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="08_autoencoder.html">
+                        Autoencoders
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="09_variational_autoencoder.html">
+                        Variational autoencoders
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="10_GANs.html">
+                        Generative adversarial networks (GANs)
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="11_diffusion_models.html">
+                        Score-based models
+                      </a>
+                    </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
+      </div>
+      
+      </div>
+    
+
+    
+    
+    <div class="sidebar-header-items__end">
+      
+      <div class="navbar-end-item">
+        <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+</button>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+    
+  </div>
+
+  
+  <div class="sidebar-start-items sidebar-primary__section">
+    <div class="sidebar-start-items__item">
+  
+
+
+<a class="navbar-brand logo" href="intro.html">
+
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <img src="_static/logo.png" class="logo__image only-light" alt="Logo image">
+    <img src="_static/logo.png" class="logo__image only-dark" alt="Logo image">
+  
+  
+</a>
+    </div>
+    <div class="sidebar-start-items__item">
+<form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+    </div>
+    <div class="sidebar-start-items__item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    A Primer on the Mathematical Foundations of Deep Learning
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="00_the_mlp.html">The multilayer perceptron</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_mlp_universal_approx.html">The multilayer perceptron, a universal approximator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_deep_vs_shallow.html">Deep vs shallow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_sgd_and_bias_variance.html">SGD guarantees &amp; the bias–variance trade-off</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_invariance_robustness.html">Invariance &amp; robustness</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_equivariance_and_cnns.html">Equivariance &amp; convolutional neural networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_loss_landscape_normalization_resnets.html">The loss landscape: Normalization &amp; Residual Networks</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Input-convex neural networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_autoencoder.html">Autoencoders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_variational_autoencoder.html">Variational autoencoders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_GANs.html">Generative adversarial networks (GANs)</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="11_diffusion_models.html">Score-based models</a></li>
+</ul>
+
+    </div>
+</nav>
+    </div>
+  </div>
+  
+
+  
+  <div class="sidebar-end-items sidebar-primary__section">
+    <div class="sidebar-end-items__item">
+    </div>
+  </div>
+
+  
+  <div id="rtd-footer-container"></div>
+
+      </div>
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+        <div class="bd-content">
+          <div class="bd-article-container">
+            
+            <div class="bd-header-article">
+                
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        <label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" data-toggle="tooltip" data-placement="right" title="Toggle primary sidebar">
+            <span class="fa-solid fa-bars"></span>
+        </label>
+    </div>
+    <div class="header-article__right">
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      <li><a href="https://colab.research.google.com/v2/gh/sdittmer/mathematical_foundations_of_deep_learning/master?urlpath=tree/docs/07_input_convex_neural_nets.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="btn__text-container">Binder</span>
+</a>
+</a>
+      
+  </ul>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      <li><a href="_sources/07_input_convex_neural_nets.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</a>
+      
+      <li>
+<button onclick="printPdf(this)"
+  class="btn btn-sm dropdown-item"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</a>
+      
+  </ul>
+</div>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary" data-toggle="tooltip" data-placement="left" title="Toggle secondary sidebar">
+            <span class="fa-solid fa-list"></span>
+        </label>
+    </div>
+</div>
+            </div>
+            
+            
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Input-convex neural networks</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#a-reminder-on-convexity">
+   A reminder on convexity
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#motivation-is-it-be-useful-to-learn-convex-pdfs">
+   Motivation – is it be useful to learn convex pdfs?
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#how-to-build-icnns">
+   How to build ICNNs
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#how-to-learn-log-p-x-from-samples">
+   How to learn
+   <span class="math notranslate nohighlight">
+    \(-\log p(x)\)
+   </span>
+   from samples?
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#example">
+   Example
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#train-an-icnn-to-fit-log-p">
+     Train an ICNN to fit
+     <span class="math notranslate nohighlight">
+      \(-\log p\)
+     </span>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#find-sample-with-maximum-probability">
+     Find sample with maximum probability
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#exercises">
+   Exercises
+  </a>
+ </li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+            <article class="bd-article" role="main">
+              
+  <section class="tex2jax_ignore mathjax_ignore" id="input-convex-neural-networks">
+<h1>Input-convex neural networks<a class="headerlink" href="#input-convex-neural-networks" title="Permalink to this headline">#</a></h1>
+<ul class="simple">
+<li><p>We have designed different network architectures to enforces or promote properties. E.g.,</p>
+<ul>
+<li><p>Invariance: PointNet</p></li>
+<li><p>Equivariance: CNNs</p></li>
+<li><p>Better optimizability: ResNet, normalizations.</p></li>
+</ul>
+</li>
+<li><p>Up until now only regression and classification.</p></li>
+</ul>
+<p>Plan:</p>
+<ol class="arabic simple">
+<li><p>Design networks that are convex in their input (ICNNs) (<a class="reference external" href="https://arxiv.org/pdf/1609.07152.pdf">Source.</a>)</p></li>
+<li><p>Use ICNNs to learn convex probability density functions.</p></li>
+</ol>
+<section id="a-reminder-on-convexity">
+<h2>A reminder on convexity<a class="headerlink" href="#a-reminder-on-convexity" title="Permalink to this headline">#</a></h2>
+<p>We want to build a neural network that can only represent convex functions <span class="math notranslate nohighlight">\(f:\mathbb{R}^n \to \mathbb{R}\)</span>.</p>
+<div class="proof definition admonition" id="convexity_def">
+<p class="admonition-title"><span class="caption-number">Definition 11 </span></p>
+<section class="definition-content" id="proof-content">
+<p>We call a function <span class="math notranslate nohighlight">\(f:\mathbb{R}^n \to \mathbb{R}\)</span> convex if for all <span class="math notranslate nohighlight">\(t\in[0,1]\)</span></p>
+<div class="math notranslate nohighlight">
+\[f(tx + (1-t)y) \le t f(x) + (1-t)f(y) \ \forall x, y.\]</div>
+</section>
+</div><div class="proof lemma admonition" id="convex_local_minimum_lemma">
+<p class="admonition-title"><span class="caption-number">Lemma 13 </span></p>
+<section class="lemma-content" id="proof-content">
+<p>Any local minimum of a convex function is a global minimum.</p>
+</section>
+</div><p>And we can find it!</p>
+<p>Reminder:</p>
+<div class="proof theorem admonition" id="sgd_thm">
+<p class="admonition-title"><span class="caption-number">Theorem 12 </span> (Convergence of SGD)</p>
+<section class="theorem-content" id="proof-content">
+<p>We assume that <span class="math notranslate nohighlight">\(f:\mathbb{R}^n\to\mathbb{R}\)</span> has an L-Lipschitz gradient, and is convex. We also assume that we use stochastic gradients <span class="math notranslate nohighlight">\(v_k\)</span> from an unbiased estimator with a bounded variance</p>
+<div class="math notranslate nohighlight">
+\[\mbox{Var}(v_k) = \mathbb{E}\|v_k\|_2^2 - \|\mathbb{E}v_k\|_2^2 \le \sigma^2.\]</div>
+<p>Then, for any SGD iteration <span class="math notranslate nohighlight">\(k\)</span> with step size <span class="math notranslate nohighlight">\(t_k=t\le \frac{1}{L}\)</span> we have</p>
+<div class="math notranslate nohighlight">
+\[\mathbb{E} f(\overline x_k) \le f(x^*) + \frac{\|x_0-x^*\|_2^2}{2tk} + t\sigma^2,\]</div>
+<p>where <span class="math notranslate nohighlight">\(\overline x_k = \frac{1}{k} \sum_{i=1}^{k}x_{i}\)</span> and <span class="math notranslate nohighlight">\(x^* = \arg\min_x f(x)\)</span>.</p>
+<p>Further, we can <em>expect</em> to find an <span class="math notranslate nohighlight">\(\epsilon/2\)</span> optimal value within</p>
+<div class="math notranslate nohighlight">
+\[k = \frac{(2\sigma^2 + \|x_0-x^*\|_2^2)^2}{\epsilon^2}\]</div>
+<p>iterations, by setting <span class="math notranslate nohighlight">\(t = \frac{1}{\sqrt{k}}\)</span>. Here we assume <span class="math notranslate nohighlight">\(\frac{1}{\sqrt{k}} \le \frac{1}{L}\)</span>.</p>
+</section>
+</div><p>Therefore we have:</p>
+<div class="proof theorem admonition" id="sgd_thm">
+<p class="admonition-title"><span class="caption-number">Theorem 12 </span> (Convergence of Gradient Descent)</p>
+<section class="theorem-content" id="proof-content">
+<p>We assume that <span class="math notranslate nohighlight">\(f:\mathbb{R}^n\to\mathbb{R}\)</span> admits a Taylor expansion, has an L-Lipschitz gradient, and is convex.</p>
+<p>Then, for any SGD iteration <span class="math notranslate nohighlight">\(k\)</span> with step size <span class="math notranslate nohighlight">\(t_k=t\le \frac{1}{L}\)</span> we have</p>
+<div class="math notranslate nohighlight">
+\[f(\overline x_k) \le f(x^*) + \frac{\|x_0-x^*\|_2^2}{2tk},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\overline x_k = \frac{1}{k} \sum_{i=0}^{k-1}x_{i+1}\)</span> and <span class="math notranslate nohighlight">\(x^* = \arg\min_x f(x)\)</span>.</p>
+<p>Further, we can <em>expect</em> to find a <span class="math notranslate nohighlight">\(\epsilon/2\)</span> optimal value within</p>
+<div class="math notranslate nohighlight">
+\[k = \frac{\|x_0-x^*\|_2^4}{\epsilon^2}\]</div>
+<p>iterations, by setting <span class="math notranslate nohighlight">\(t = \frac{1}{\sqrt{k}}\)</span>.</p>
+</section>
+</div></section>
+<section id="motivation-is-it-be-useful-to-learn-convex-pdfs">
+<h2>Motivation – is it be useful to learn convex pdfs?<a class="headerlink" href="#motivation-is-it-be-useful-to-learn-convex-pdfs" title="Permalink to this headline">#</a></h2>
+<p>Assume we want to measure some data point <span class="math notranslate nohighlight">\(x\in\mathbb{R}\)</span>, but our measurement device has Gaussian noisy with the noise standard deviation of <span class="math notranslate nohighlight">\(\sigma\)</span>. I.e., for the ground truth <span class="math notranslate nohighlight">\(x\)</span> we measure a sample from</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{N}(x, \sigma^2) \hat = \frac{1}{\sqrt{2\pi\sigma^2}}\exp -\frac{\left(y-x\right)^2}{2\sigma^2}.\]</div>
+<p>If we want to find the most likely <span class="math notranslate nohighlight">\(x\)</span> causing our measurement <span class="math notranslate nohighlight">\(y\)</span> we want to calculate</p>
+<div class="math notranslate nohighlight">
+\[\arg\max_x p(x|y).\]</div>
+<p>Via Bayes theorem we can write</p>
+<div class="math notranslate nohighlight">
+\[p(x|y) = \frac{p(y|x)p(x)}{p(y)} \propto p(y|x)p(x)\]</div>
+<p>and since <span class="math notranslate nohighlight">\(\log\)</span> is monotonically increasing we can also write</p>
+<div class="math notranslate nohighlight">
+\[\arg\max_x p(x|y) = \arg\min_x -\log p(y|x) - \log p(x)\]</div>
+<div class="math notranslate nohighlight">
+\[=\arg\min_x \frac{1}{2\sigma^2}(y-x)^2 - \log p(x).\]</div>
+<p>If we know <span class="math notranslate nohighlight">\(-\log p(x)\)</span> and it is convex, then we can solve this problem via gradient descent.</p>
+<ul class="simple">
+<li><p>Problem: One often has samples from <span class="math notranslate nohighlight">\(p(x)\)</span>, but not the density <span class="math notranslate nohighlight">\(p(x)\)</span>.</p></li>
+<li><p>Idea: Somehow learn a convex approximation of <span class="math notranslate nohighlight">\(-\log p(x)\)</span>.</p></li>
+</ul>
+</section>
+<section id="how-to-build-icnns">
+<h2>How to build ICNNs<a class="headerlink" href="#how-to-build-icnns" title="Permalink to this headline">#</a></h2>
+<p>One can use three main properties of convex functions to build ICNNS  (ICNNs) (<a class="reference external" href="https://arxiv.org/pdf/1609.07152.pdf">Source.</a>).</p>
+<ol class="arabic simple">
+<li><p>If <span class="math notranslate nohighlight">\(g_i:\mathbb{R}^n \to \mathbb{R}\)</span> are convex function and <span class="math notranslate nohighlight">\(w_i\ge 0\)</span>, then <span class="math notranslate nohighlight">\(x \mapsto \sum_i w_ig_i(x)\)</span> is a convex function.</p></li>
+<li><p>If <span class="math notranslate nohighlight">\(g:\mathbb{R}^n\to\mathbb{R}\)</span> and <span class="math notranslate nohighlight">\(f:\mathbb{R}\to\mathbb{R}\)</span> are convex functions and <span class="math notranslate nohighlight">\(f\)</span> is monotonically increasing, then <span class="math notranslate nohighlight">\(f\circ g\)</span> is convex.</p></li>
+<li><p>Linear maps are convex.</p></li>
+</ol>
+<p>We can now think about building a layer for an ICNN <span class="math notranslate nohighlight">\(f:\mathbb{R}^n\ni x \mapsto f(x)\in\mathbb{R}\)</span>. Let <span class="math notranslate nohighlight">\(z_i\)</span> be the input of the <span class="math notranslate nohighlight">\(i\)</span>th layer and <span class="math notranslate nohighlight">\(z_0=x\)</span>.</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(A_iz_i + b_i\)</span> is convex in <span class="math notranslate nohighlight">\(z_i\)</span>, for a linear <span class="math notranslate nohighlight">\(A_i\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\phi_i(A_iz_i + b_i)\)</span> is convex and monotonically increasing in <span class="math notranslate nohighlight">\(z_i\)</span>, for the entriwise convex and montonically increasing activation <span class="math notranslate nohighlight">\(\phi\)</span> and for <span class="math notranslate nohighlight">\(A_i\ge0\)</span> entriwise.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\phi_i(A_iz_i + B_ix + b_i)\)</span> is convex in <span class="math notranslate nohighlight">\(x\)</span> and convex and monotonically increasing in <span class="math notranslate nohighlight">\(z_i\)</span> – for <span class="math notranslate nohighlight">\(B_i\)</span> a general linear mapping.</p></li>
+</ul>
+<p>Therefore we can define a ICNN with entriwise convex outputs via the concatenation layers</p>
+<div class="math notranslate nohighlight">
+\[\phi_i(A_iz_i + B_ix + b_i),\]</div>
+<p>where <span class="math notranslate nohighlight">\(\phi_i\)</span> is a entriwise convex and monotonically increasing activation. <span class="math notranslate nohighlight">\(A_i, B_i\)</span> are matrices, with the entries of <span class="math notranslate nohighlight">\(B_i\)</span> being <span class="math notranslate nohighlight">\(\ge0\)</span> and <span class="math notranslate nohighlight">\(b_i\)</span> being a vector.</p>
+</section>
+<section id="how-to-learn-log-p-x-from-samples">
+<h2>How to learn <span class="math notranslate nohighlight">\(-\log p(x)\)</span> from samples?<a class="headerlink" href="#how-to-learn-log-p-x-from-samples" title="Permalink to this headline">#</a></h2>
+<p>We assume to have a dataset, <span class="math notranslate nohighlight">\(\{x_i\}_i\)</span>, of samples <span class="math notranslate nohighlight">\(x_i\sim p_X(x)\)</span>.</p>
+<p>We begin with the simple observation that</p>
+<div class="math notranslate nohighlight">
+\[g(x) := \mathbb{P}(x \text{ was drawn from $p_X$ instead of $p_N$}) = \frac{p_X(x)}{p_X(x) + p_N(x)}\]</div>
+<p>If we have such an <span class="math notranslate nohighlight">\(f\)</span> and know <span class="math notranslate nohighlight">\(p_N\)</span>, e.g., we could define it to be a Gaussian, we can compute</p>
+<div class="math notranslate nohighlight">
+\[p_X = \frac{p_N f}{1 - g}\]</div>
+<p>and</p>
+<div class="math notranslate nohighlight">
+\[-\log p_X = -\log(p_N) -\log(g) + \log(1 - g) = -\log(p_N) -\log \frac{1}{1/g - 1} = -\log(p_N) + \log (1/g - 1).\]</div>
+<p>Or if we assume that the classifer does not include a final sigmoid, i.e., we have <span class="math notranslate nohighlight">\(f=\mbox{sigmoid}(g)\)</span> and</p>
+<div class="math notranslate nohighlight">
+\[-\log p_X = -\log(p_N) + \log (1/\mbox{sigmoid}(f) - 1) = -\log(p_N) + \log e^{-f} = -\log(p_N) - f.\]</div>
+<p>So, if <span class="math notranslate nohighlight">\(-f\)</span> and <span class="math notranslate nohighlight">\(-\log(p_N)\)</span> are convex, the whole expression is convex. This is fulfilled if, e.g., <span class="math notranslate nohighlight">\(p_N\)</span> is a Gaussian or (on a bounded set) the uniform distribution and <span class="math notranslate nohighlight">\(f\)</span> is concave. Architecture-wise, we can represent a concave function via the negative of a convex function. But, how can we train such an <span class="math notranslate nohighlight">\(f\)</span>?</p>
+<p>In theory (and in low dimensions) we can simply train a binary classifier via the BCE to differentiate between samples from the two distributions to get <span class="math notranslate nohighlight">\(f\)</span>.</p>
+</section>
+<section id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">#</a></h2>
+<section id="train-an-icnn-to-fit-log-p">
+<h3>Train an ICNN to fit <span class="math notranslate nohighlight">\(-\log p\)</span><a class="headerlink" href="#train-an-icnn-to-fit-log-p" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_samplesX</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span>
+
+
+<span class="n">xs</span> <span class="o">=</span> <span class="n">get_samplesX</span><span class="p">(</span><span class="mi">16384</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">xs</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/04f2bb821dee48e1719053fb75dee27d558fc2a737cf6a5b5b10bbd2df9df0c0.png" src="_images/04f2bb821dee48e1719053fb75dee27d558fc2a737cf6a5b5b10bbd2df9df0c0.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_samplesN</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="n">η</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">-</span> <span class="mi">5</span>
+    <span class="k">return</span> <span class="n">η</span>
+
+
+<span class="n">ηs</span> <span class="o">=</span> <span class="n">get_samplesN</span><span class="p">(</span><span class="mi">16384</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">ηs</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/ef8501fe56c7ea3268672e875b7285d2b6a48bb5ba3b21131bc48c5f050ce34e.png" src="_images/ef8501fe56c7ea3268672e875b7285d2b6a48bb5ba3b21131bc48c5f050ce34e.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_training_batch</span><span class="p">(</span><span class="n">n_half</span><span class="p">):</span>
+    <span class="n">xs</span> <span class="o">=</span> <span class="n">get_samplesX</span><span class="p">(</span><span class="n">n_half</span><span class="p">)</span>
+    <span class="n">ηs</span> <span class="o">=</span> <span class="n">get_samplesN</span><span class="p">(</span><span class="n">n_half</span><span class="p">)</span>
+
+    <span class="n">xs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">xs</span><span class="p">,</span> <span class="n">ηs</span><span class="p">])</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">ys</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
+    <span class="n">ys</span><span class="p">[:</span><span class="n">n_half</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>
+
+    <span class="k">return</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ICNNLayer</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_dim</span><span class="p">,</span> <span class="n">input_dim</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">,</span> <span class="n">standard_act</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">x_dim</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">standard_act</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">act</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(</span><span class="n">negative_slope</span><span class="o">=</span><span class="mf">.2</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">act</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Identity</span><span class="p">()</span><span class="c1">#torch.nn.Sigmoid()</span>
+
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">clamp_</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">Az</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+        <span class="n">Bx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">act</span><span class="p">(</span><span class="n">Az</span> <span class="o">+</span> <span class="n">Bx</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">ICNN</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">16</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">width</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">layer0</span> <span class="o">=</span> <span class="n">ICNNLayer</span><span class="p">(</span><span class="n">x_dim</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layer1</span> <span class="o">=</span> <span class="n">ICNNLayer</span><span class="p">(</span><span class="n">x_dim</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layer2</span> <span class="o">=</span> <span class="n">ICNNLayer</span><span class="p">(</span><span class="n">x_dim</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layer3</span> <span class="o">=</span> <span class="n">ICNNLayer</span><span class="p">(</span><span class="n">x_dim</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">standard_act</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer0</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer1</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer2</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer3</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">z</span>
+
+
+<span class="k">class</span> <span class="nc">OurDensityModel</span><span class="p">(</span><span class="n">ICNN</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">128</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">x_dim</span><span class="o">=</span><span class="n">x_dim</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">fs</span> <span class="o">=</span> <span class="o">-</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">minus_log_ps</span> <span class="o">=</span> <span class="o">-</span> <span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">10</span><span class="p">)</span> <span class="o">-</span> <span class="n">fs</span>
+        <span class="n">ps</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">minus_log_ps</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fs</span><span class="p">,</span> <span class="n">minus_log_ps</span><span class="p">,</span> <span class="n">ps</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">OurDensityModel</span><span class="p">()</span>
+
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">3e-4</span><span class="p">)</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">BCEWithLogitsLoss</span><span class="p">()</span>
+
+<span class="n">losses</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3000</span><span class="p">):</span>
+    <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span> <span class="o">=</span> <span class="n">get_training_batch</span><span class="p">(</span><span class="mi">256</span><span class="p">)</span>
+    <span class="n">fs</span><span class="p">,</span> <span class="n">minus_log_ps</span><span class="p">,</span> <span class="n">ps</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
+
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">fs</span><span class="p">,</span> <span class="n">ys</span><span class="p">)</span>
+    <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+
+    <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+    <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">losses</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/7a52d0aadca303c86c1ccb7f2f2212512eb974af78edfe214adc3cee18770a79.png" src="_images/7a52d0aadca303c86c1ccb7f2f2212512eb974af78edfe214adc3cee18770a79.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_np</span><span class="p">(</span><span class="n">xs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">xs</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+
+<span class="n">xs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">fs</span><span class="p">,</span> <span class="n">minus_log_ps</span><span class="p">,</span> <span class="n">ps</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
+
+<span class="n">xs</span> <span class="o">=</span> <span class="n">get_np</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
+<span class="n">ps</span> <span class="o">=</span> <span class="n">get_np</span><span class="p">(</span><span class="n">ps</span><span class="p">)</span>
+<span class="n">minus_log_ps</span> <span class="o">=</span> <span class="n">get_np</span><span class="p">(</span><span class="n">minus_log_ps</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">get_np</span><span class="p">(</span><span class="n">get_samplesX</span><span class="p">(</span><span class="mi">16384</span><span class="p">)),</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ps</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">minus_log_ps</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/36ea94defb9d3c4c2e49453b02966e4725070ae1f06189bcb73705f0f8616885.png" src="_images/36ea94defb9d3c4c2e49453b02966e4725070ae1f06189bcb73705f0f8616885.png" />
+<img alt="_images/2ef9b53ff9d361f0eb12a5a972ae349b9fa5005810289b423e54c40968ad054c.png" src="_images/2ef9b53ff9d361f0eb12a5a972ae349b9fa5005810289b423e54c40968ad054c.png" />
+</div>
+</div>
+</section>
+<section id="find-sample-with-maximum-probability">
+<h3>Find sample with maximum probability<a class="headerlink" href="#find-sample-with-maximum-probability" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">x</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">()</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">({</span><span class="n">x</span><span class="p">},</span> <span class="n">lr</span><span class="o">=</span><span class="mf">.2</span><span class="p">)</span>
+
+<span class="n">x_history</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">y_history</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">minus_log_ps</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="n">x_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+    <span class="n">y_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">minus_log_ps</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+
+    <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+    <span class="n">minus_log_ps</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">rf</span><span class="s2">&quot;Extimate of the sample with max probability: $x=</span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s2">.2</span><span class="si">}</span><span class="s2">$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ps</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$-\log(ps)$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_history</span><span class="p">,</span> <span class="n">y_history</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;histroy&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/4c5199d9a50e481f42a79d7baf7f4d4527c755d329060bdcb8fbebf974476b1e.png" src="_images/4c5199d9a50e481f42a79d7baf7f4d4527c755d329060bdcb8fbebf974476b1e.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="exercises">
+<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h2>
+<ul class="simple">
+<li><p>Assume <span class="math notranslate nohighlight">\(g\)</span> and <span class="math notranslate nohighlight">\(f\)</span> are sufficiently smooth convex functions and let <span class="math notranslate nohighlight">\(f\)</span> be monotonically increasing. Look up the definiton of convexity based on the Hessian and prove that <span class="math notranslate nohighlight">\(f\circ g\)</span> is convex.</p></li>
+<li><p>Use the above implemented ICNN to implement the reconstruction example in the motivation.</p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+            </article>
+            
+
+            
+            
+            <footer class="bd-footer-article">
+                <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+  <a class='left-prev' id="prev-link" href="06_loss_landscape_normalization_resnets.html" title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+          <p class="prev-next-subtitle">previous</p>
+          <p class="prev-next-title">The loss landscape: Normalization &amp; Residual Networks</p>
+      </div>
+  </a>
+  <a class='right-next' id="next-link" href="08_autoencoder.html" title="next page">
+  <div class="prev-next-info">
+      <p class="prev-next-subtitle">next</p>
+      <p class="prev-next-title">Autoencoders</p>
+  </div>
+  <i class="fa-solid fa-angle-right"></i>
+  </a>
+</div>
+            </footer>
+            
+          </div>
+          
+          
+          
+            <div class="bd-sidebar-secondary bd-toc">
+              
+<div class="toc-item">
+  
+<div class="tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+</div>
+<nav id="bd-toc-nav" class="page-toc">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#a-reminder-on-convexity">
+   A reminder on convexity
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#motivation-is-it-be-useful-to-learn-convex-pdfs">
+   Motivation – is it be useful to learn convex pdfs?
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#how-to-build-icnns">
+   How to build ICNNs
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#how-to-learn-log-p-x-from-samples">
+   How to learn
+   <span class="math notranslate nohighlight">
+    \(-\log p(x)\)
+   </span>
+   from samples?
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#example">
+   Example
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#train-an-icnn-to-fit-log-p">
+     Train an ICNN to fit
+     <span class="math notranslate nohighlight">
+      \(-\log p\)
+     </span>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#find-sample-with-maximum-probability">
+     Find sample with maximum probability
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#exercises">
+   Exercises
+  </a>
+ </li>
+</ul>
+
+</nav>
+</div>
+
+            </div>
+          
+          
+        </div>
+        <footer class="bd-footer-content">
+          <div class="bd-footer-content__inner">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Sören Dittmer
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+<p class="copyright">
+
+    &copy; Copyright 2022.<br>
+
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+Last updated on None.<br>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </div>
+        </footer>
+        
+
+      </main>
+    </div>
+  </div>
+
+  
+    
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=796348d33e8b1d947c94"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=796348d33e8b1d947c94"></script>
+
+  </body>
+</html>

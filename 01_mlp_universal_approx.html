@@ -1,0 +1,987 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>The multilayer perceptron, a universal approximator &#8212; A Primer on the Mathematical Foundations of Deep Learning</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+<link href="_static/styles/bootstrap.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=4ec06e9971c5264fbd345897d5258098f11cc577" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=796348d33e8b1d947c94">
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=796348d33e8b1d947c94">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=8bf782fb4ee92b3d3646425e50f299c4e1fd152d"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '01_mlp_universal_approx';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Deep vs shallow" href="02_deep_vs_shallow.html" />
+    <link rel="prev" title="The multilayer perceptron" href="00_the_mlp.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="docsearch:language" content="None">
+  </head>
+  
+  
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="180" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  
+  <input type="checkbox" class="sidebar-toggle" name="__primary" id="__primary">
+  <label class="overlay overlay-primary" for="__primary"></label>
+
+  
+  <input type="checkbox" class="sidebar-toggle" name="__secondary" id="__secondary">
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+      
+<form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+    </div>
+  </div>
+
+  
+  <nav class="bd-header navbar navbar-expand-lg bd-navbar" id="navbar-main"><div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+      <span class="fa-solid fa-bars"></span>
+  </label>
+  <div id="navbar-start">
+    
+    
+  
+
+
+<a class="navbar-brand logo" href="intro.html">
+
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <img src="_static/logo.png" class="logo__image only-light" alt="Logo image">
+    <img src="_static/logo.png" class="logo__image only-dark" alt="Logo image">
+  
+  
+</a>
+    
+  </div>
+
+  
+  <div class="col-lg-9 navbar-header-items">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="00_the_mlp.html">
+                        The multilayer perceptron
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="#">
+                        The multilayer perceptron, a universal approximator
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="02_deep_vs_shallow.html">
+                        Deep vs shallow
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="03_sgd_and_bias_variance.html">
+                        SGD guarantees & the bias–variance trade-off
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="04_invariance_robustness.html">
+                        Invariance & robustness
+                      </a>
+                    </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="05_equivariance_and_cnns.html">
+                        Equivariance & convolutional neural networks
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="06_loss_landscape_normalization_resnets.html">
+                        The loss landscape: Normalization & Residual Networks
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="07_input_convex_neural_nets.html">
+                        Input-convex neural networks
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="08_autoencoder.html">
+                        Autoencoders
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="09_variational_autoencoder.html">
+                        Variational autoencoders
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="10_GANs.html">
+                        Generative adversarial networks (GANs)
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="11_diffusion_models.html">
+                        Score-based models
+                      </a>
+                    </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+        <div class="navbar-end-item navbar-persistent--container">
+          
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+        </div>
+      
+      
+      <div class="navbar-end-item">
+        <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+</button>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+
+
+  
+  
+    <div class="navbar-persistent--mobile">
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+    </div>
+  
+
+  
+  <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+  </label>
+  
+
+</div>
+  </nav>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+      
+      <div class="navbar-center-item">
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="00_the_mlp.html">
+                        The multilayer perceptron
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="#">
+                        The multilayer perceptron, a universal approximator
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="02_deep_vs_shallow.html">
+                        Deep vs shallow
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="03_sgd_and_bias_variance.html">
+                        SGD guarantees & the bias–variance trade-off
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="04_invariance_robustness.html">
+                        Invariance & robustness
+                      </a>
+                    </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="05_equivariance_and_cnns.html">
+                        Equivariance & convolutional neural networks
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="06_loss_landscape_normalization_resnets.html">
+                        The loss landscape: Normalization & Residual Networks
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="07_input_convex_neural_nets.html">
+                        Input-convex neural networks
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="08_autoencoder.html">
+                        Autoencoders
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="09_variational_autoencoder.html">
+                        Variational autoencoders
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="10_GANs.html">
+                        Generative adversarial networks (GANs)
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="11_diffusion_models.html">
+                        Score-based models
+                      </a>
+                    </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
+      </div>
+      
+      </div>
+    
+
+    
+    
+    <div class="sidebar-header-items__end">
+      
+      <div class="navbar-end-item">
+        <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+</button>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+    
+  </div>
+
+  
+  <div class="sidebar-start-items sidebar-primary__section">
+    <div class="sidebar-start-items__item">
+  
+
+
+<a class="navbar-brand logo" href="intro.html">
+
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <img src="_static/logo.png" class="logo__image only-light" alt="Logo image">
+    <img src="_static/logo.png" class="logo__image only-dark" alt="Logo image">
+  
+  
+</a>
+    </div>
+    <div class="sidebar-start-items__item">
+<form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+    </div>
+    <div class="sidebar-start-items__item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    A Primer on the Mathematical Foundations of Deep Learning
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="00_the_mlp.html">The multilayer perceptron</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">The multilayer perceptron, a universal approximator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_deep_vs_shallow.html">Deep vs shallow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_sgd_and_bias_variance.html">SGD guarantees &amp; the bias–variance trade-off</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_invariance_robustness.html">Invariance &amp; robustness</a></li>
+<li class="toctree-l1"><a class="reference internal" href="05_equivariance_and_cnns.html">Equivariance &amp; convolutional neural networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_loss_landscape_normalization_resnets.html">The loss landscape: Normalization &amp; Residual Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_input_convex_neural_nets.html">Input-convex neural networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_autoencoder.html">Autoencoders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_variational_autoencoder.html">Variational autoencoders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_GANs.html">Generative adversarial networks (GANs)</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="11_diffusion_models.html">Score-based models</a></li>
+</ul>
+
+    </div>
+</nav>
+    </div>
+  </div>
+  
+
+  
+  <div class="sidebar-end-items sidebar-primary__section">
+    <div class="sidebar-end-items__item">
+    </div>
+  </div>
+
+  
+  <div id="rtd-footer-container"></div>
+
+      </div>
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+        <div class="bd-content">
+          <div class="bd-article-container">
+            
+            <div class="bd-header-article">
+                
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        <label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" data-toggle="tooltip" data-placement="right" title="Toggle primary sidebar">
+            <span class="fa-solid fa-bars"></span>
+        </label>
+    </div>
+    <div class="header-article__right">
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      <li><a href="https://colab.research.google.com/v2/gh/sdittmer/mathematical_foundations_of_deep_learning/master?urlpath=tree/docs/01_mlp_universal_approx.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="btn__text-container">Binder</span>
+</a>
+</a>
+      
+  </ul>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      <li><a href="_sources/01_mlp_universal_approx.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</a>
+      
+      <li>
+<button onclick="printPdf(this)"
+  class="btn btn-sm dropdown-item"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</a>
+      
+  </ul>
+</div>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary" data-toggle="tooltip" data-placement="left" title="Toggle secondary sidebar">
+            <span class="fa-solid fa-list"></span>
+        </label>
+    </div>
+</div>
+            </div>
+            
+            
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>The multilayer perceptron, a universal approximator</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#two-famous-universal-approximation-theorems">
+   Two famous universal approximation theorems
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#a-one-dimensional-universal-approximation-theorem">
+   A one-dimensional universal approximation theorem
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#a-relu-universal-approximation-theorem">
+   A ReLU universal approximation theorem
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#but-wait">
+   But wait …
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#exercises">
+   Exercises
+  </a>
+ </li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+            <article class="bd-article" role="main">
+              
+  <section class="tex2jax_ignore mathjax_ignore" id="the-multilayer-perceptron-a-universal-approximator">
+<h1>The multilayer perceptron, a universal approximator<a class="headerlink" href="#the-multilayer-perceptron-a-universal-approximator" title="Permalink to this headline">#</a></h1>
+<p>We will try to answer: Is there something an MLP cannot approximate?</p>
+<ul class="simple">
+<li><p>G. Cybenko. Approximation by superpositions of a sigmoidal function. Math. Control Signal, 1989.</p>
+<ul>
+<li><p>For sigmoid.</p></li>
+</ul>
+</li>
+<li><p>K. Hornik. Approximation capabilities of multilayer feedforward networks. Neural Networks, 1991.</p></li>
+<li><p>A. Pinkus, Approximation theory of the MLP model in neural networks, 1999</p></li>
+</ul>
+<section id="two-famous-universal-approximation-theorems">
+<h2>Two famous universal approximation theorems<a class="headerlink" href="#two-famous-universal-approximation-theorems" title="Permalink to this headline">#</a></h2>
+<div class="proof definition admonition" id="net_notation_def">
+<p class="admonition-title"><span class="caption-number">Definition 1 </span></p>
+<section class="definition-content" id="proof-content">
+<p>For <span class="math notranslate nohighlight">\(d\in\mathbb{N}\)</span> and <span class="math notranslate nohighlight">\(M, N, L \in \mathbb{N}\cup \{\infty\}\)</span> we denote by <span class="math notranslate nohighlight">\(\mathcal{NN}_{d,M,N,L}^f\)</span> the set of all neural networks <span class="math notranslate nohighlight">\(\phi:\mathbb{R}^d\to\mathbb{R}\)</span> with the activation function <span class="math notranslate nohighlight">\(f\)</span> after each layer (except the last), such that <span class="math notranslate nohighlight">\(M(\phi), N(\phi), L(\phi) &lt; \infty\)</span> and <span class="math notranslate nohighlight">\(M(\phi)\le M\)</span>, <span class="math notranslate nohighlight">\(N(\phi)\le N\)</span>, and <span class="math notranslate nohighlight">\(L(\phi)\le L\)</span>.</p>
+<p>With</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(L(\phi)\)</span> the number of layers,</p></li>
+<li><p><span class="math notranslate nohighlight">\(N(\phi)\)</span> the number of neurons, defined as <span class="math notranslate nohighlight">\(N(\phi) = d + \sum_{j=1}^L N_j\)</span>, and</p></li>
+<li><p><span class="math notranslate nohighlight">\(M(\phi)\)</span> the number of non-zero parameters, i.e., <span class="math notranslate nohighlight">\(\sum_{j=1}^L \|A_j\|_0 + \|b_j\|_0\)</span>.</p></li>
+</ul>
+</section>
+</div><div class="proof theorem admonition" id="hornik_thm">
+<p class="admonition-title"><span class="caption-number">Theorem 1 </span> (Hornik’s universal approximation theorem)</p>
+<section class="theorem-content" id="proof-content">
+<p>If <span class="math notranslate nohighlight">\(f\)</span> is continuous, bounded and non-constant and <span class="math notranslate nohighlight">\(X\subset \mathbb{R}^d\)</span> is compact, then</p>
+<div class="math notranslate nohighlight">
+\[\overline{\mathcal{NN}_{d,\infty,\infty,2}^f}=C(X).\]</div>
+</section>
+</div><div class="proof theorem admonition" id="Pinkus_thm">
+<p class="admonition-title"><span class="caption-number">Theorem 2 </span> (Pinkus’s universal approximation theorem)</p>
+<section class="theorem-content" id="proof-content">
+<p>If <span class="math notranslate nohighlight">\(f\)</span> is continuous and <span class="math notranslate nohighlight">\(X\subset \mathbb{R}^d\)</span> is compact, then</p>
+<div class="math notranslate nohighlight">
+\[\overline{\mathcal{NN}_{d,\infty,\infty,2}^f}=C(X)\]</div>
+<p>iff <span class="math notranslate nohighlight">\(f\)</span> is not a polynomial.</p>
+</section>
+</div></section>
+<section id="a-one-dimensional-universal-approximation-theorem">
+<h2>A one-dimensional universal approximation theorem<a class="headerlink" href="#a-one-dimensional-universal-approximation-theorem" title="Permalink to this headline">#</a></h2>
+<div class="proof lemma admonition" id="1d_approx_thm">
+<p class="admonition-title"><span class="caption-number">Lemma 1 </span> (A one-dimensional approximation theorem, <a class="reference external" href="https://mjt.cs.illinois.edu/dlt/index.pdf">source.</a>.)</p>
+<section class="lemma-content" id="proof-content">
+<p>Let <span class="math notranslate nohighlight">\(g:\mathbb{R}\to\mathbb{R}\)</span> be an L-Lipschitz function. Then for any <span class="math notranslate nohighlight">\(\epsilon &gt; 0\)</span> there exists a two-layer network <span class="math notranslate nohighlight">\(f\)</span> with <span class="math notranslate nohighlight">\(\lceil\frac{L}{\epsilon}\rceil\)</span> binary nodes <span class="math notranslate nohighlight">\(z\mapsto 1[z\ge0]\)</span> such that <span class="math notranslate nohighlight">\(\sup_{x\in[0,1]} |f(x) - g(x)| \le \epsilon\)</span>.</p>
+</section>
+</div><div class="dropdown admonition">
+<p class="admonition-title">Click for proof.</p>
+<div class="proof admonition" id="proof">
+<p>Proof. We define</p>
+<ol class="arabic simple">
+<li><p><span class="math notranslate nohighlight">\(m = \lceil\frac{L}{\epsilon}\rceil\)</span>,</p></li>
+<li><p><span class="math notranslate nohighlight">\(b_i = i\epsilon / L\)</span> with <span class="math notranslate nohighlight">\(i\in\{0,..,m-1\}\)</span>,</p></li>
+<li><p><span class="math notranslate nohighlight">\(a_0 = g(0)\)</span>,</p></li>
+<li><p><span class="math notranslate nohighlight">\(a_i = g(b_i) - g(b_{i-1})\)</span>,</p></li>
+<li><p><span class="math notranslate nohighlight">\(f(x) = \sum_{i=0}^{m-1} a_i 1[x\ge b_i]\)</span>,</p></li>
+<li><p><span class="math notranslate nohighlight">\(x\in[0,1]\)</span> and <span class="math notranslate nohighlight">\(k\)</span> the largest index with <span class="math notranslate nohighlight">\(b_k\le x\)</span>.</p></li>
+</ol>
+<p>From 6. we get that <span class="math notranslate nohighlight">\(f\)</span> is constant over <span class="math notranslate nohighlight">\([b_k,x]\)</span>.
+We also have</p>
+<div class="math notranslate nohighlight">
+\[|g(x) - f(x)| \le |g(x) - g(b_k)| + |g(b_k) - f(b_k)| + |f(b_k) - f(x)|\]</div>
+<div class="math notranslate nohighlight">
+\[\le L |x - b_k| + |g(b_k) - \sum_{i=0}^k a_i| + 0\]</div>
+<div class="math notranslate nohighlight">
+\[\le L \frac{\epsilon}{L} + |g(b_k) - g(b_0) - \sum_{i=i}^k g(b_i) - g(b_{i-1})| = \epsilon\]</div>
+<p><span class="math notranslate nohighlight">\(\square\)</span></p>
+</div>
+</div>
+</section>
+<section id="a-relu-universal-approximation-theorem">
+<h2>A ReLU universal approximation theorem<a class="headerlink" href="#a-relu-universal-approximation-theorem" title="Permalink to this headline">#</a></h2>
+<div class="proof theorem admonition" id="rmk_thm">
+<p class="admonition-title"><span class="caption-number">Theorem 3 </span> ((A) Riesz representation theorem, <a class="reference external" href="https://link.springer.com/book/10.1007/3-540-34286-9">source.</a>)</p>
+<section class="theorem-content" id="proof-content">
+<p>Let <span class="math notranslate nohighlight">\(K\)</span> be a compact metric space. Then, for any continuous linear functional <span class="math notranslate nohighlight">\(v'\ne0\)</span> on <span class="math notranslate nohighlight">\(C(K)\)</span> there exists a signed measure <span class="math notranslate nohighlight">\(\sigma\ne0\)</span> on the Borel-<span class="math notranslate nohighlight">\(\sigma\)</span>-Algebra of <span class="math notranslate nohighlight">\(K\)</span> such that</p>
+<div class="math notranslate nohighlight">
+\[\forall f\in C(K): \; v'(f) = \int_K f(x)d\sigma(x).\]</div>
+</section>
+</div><div class="proof theorem admonition" id="relu_thm">
+<p class="admonition-title"><span class="caption-number">Theorem 4 </span> (ReLU’s universal approximation theorem, <a class="reference external" href="https://www.math.tu-berlin.de/fileadmin/i26_fg-kutyniok/Petersen/DGD_Approximation_Theory.pdf#subsubsection.2.2.3">source.</a>)</p>
+<section class="theorem-content" id="proof-content">
+<p>If <span class="math notranslate nohighlight">\(X\subset \mathbb{R}^d\)</span> is compact, with <span class="math notranslate nohighlight">\(X=\overline O\)</span>, where <span class="math notranslate nohighlight">\(O\)</span> some open set, then</p>
+<div class="math notranslate nohighlight">
+\[\overline{\mathcal{NN}_{d,\infty,\infty,3}^\mbox{ReLU}}=C(X).\]</div>
+</section>
+</div><div class="dropdown admonition">
+<p class="admonition-title">Click for proof.</p>
+<div class="proof admonition" id="proof">
+<p>Proof. As it is easy to check that <span class="math notranslate nohighlight">\(U = \mathcal{NN}_{d,\infty,\infty,3}^\mbox{ReLU}\)</span> is a linear subspace of <span class="math notranslate nohighlight">\(C(X)\)</span>, we only need to proof that it is dense. We will do a proof by contradiction.</p>
+<p>Hahn-Banach theorem <span class="math notranslate nohighlight">\(\Rightarrow\)</span> <span class="math notranslate nohighlight">\(\exists\)</span> functional <span class="math notranslate nohighlight">\(v'\ne0\)</span> s.t. <span class="math notranslate nohighlight">\(v'(f) = 0\ \forall f\in U\)</span></p>
+<p>Riesz representation theorem <span class="math notranslate nohighlight">\(\Rightarrow\)</span> <span class="math notranslate nohighlight">\(\exists\)</span> signed measure <span class="math notranslate nohighlight">\(\sigma\ne0\)</span> such that</p>
+<div class="math notranslate nohighlight">
+\[\int_X f(x)d\sigma(x) = 0 \ \forall f\in U.\]</div>
+<p>We will now show that for any cuboid <span class="math notranslate nohighlight">\(Q\subset X \ \exists (f_n)_{n \in\mathbb{N}}\subset U\)</span>, such that <span class="math notranslate nohighlight">\(f_n \to \chi_Q\)</span> pointwise and <span class="math notranslate nohighlight">\(f_n \le f_{n+1}\)</span> pointwise.</p>
+<p>But, by the montone convergence theorm – and therin will lies the contradiction – this means, that <span class="math notranslate nohighlight">\(\sigma(Q) = 0 \ \forall \)</span> cuboids.</p>
+<p>We begin by defining the cuboid</p>
+<div class="math notranslate nohighlight">
+\[Q= \Pi_{i=1}^d [c_i, e_i] \subset X\]</div>
+<p>and the function</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+    t_i^n:\mathbb{R}\ni x \mapsto t_i^n(x) = &amp;\mbox{ReLU}(nx_i - nc_i) - \mbox{ReLU}(nx_i -nc_i-1) \\
+    + &amp;\mbox{ReLU}(nx_i-ne_i) - \mbox{ReLU}(nx_i-ne_i+1),
+\end{aligned}
+\end{split}\]</div>
+<p>for <span class="math notranslate nohighlight">\(i=1,..,d\)</span>; see below for a plot. By construction we have <span class="math notranslate nohighlight">\(t_i^n\)</span> is <span class="math notranslate nohighlight">\(1\)</span> on <span class="math notranslate nohighlight">\([c_i + 1/n, e_i - 1/n]\)</span> and <span class="math notranslate nohighlight">\(t_i^{n+1}(x)\le t_i^{n+1}(x)\)</span>.</p>
+<p>We now further define</p>
+<div class="math notranslate nohighlight">
+\[h_n(x) = \mbox{ReLU}\left(\sum_{i=1}^d t_i^n(x) - (d-1)\right).\]</div>
+<p>It is easy to check that <span class="math notranslate nohighlight">\(h_n\)</span> is pointwise monotone in <span class="math notranslate nohighlight">\(n\)</span> and converges pointwise to <span class="math notranslate nohighlight">\(\chi_Q\)</span>.
+Since as all operations needed to compute <span class="math notranslate nohighlight">\(h_n\)</span> are present in a two/three layer <span class="math notranslate nohighlight">\(\mbox{ReLU}\)</span> neural network, the proof is complete.</p>
+<p>As linear combinations of different <span class="math notranslate nohighlight">\(h_n\)</span> can approximate any “blocky” piecewise constant function, which in-turn can approximate any continuous function we are done.</p>
+<p>Or, to complete the technical argument, the cuboids can generate the Borel-<span class="math notranslate nohighlight">\(\sigma\)</span>-algebra. This means that <span class="math notranslate nohighlight">\(\sigma(Q)=0\forall Q\)</span> implies that <span class="math notranslate nohighlight">\(\sigma=0\)</span>.</p>
+<p><span class="math notranslate nohighlight">\(\square\)</span></p>
+</div>
+</div>
+<div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;matplotlib.font_manager&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">disabled</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xkcd</span><span class="p">()</span>
+
+<span class="n">relu</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+
+<span class="n">t</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="n">relu</span><span class="p">(</span><span class="n">n</span><span class="o">*</span><span class="n">x</span> <span class="o">-</span> <span class="n">n</span><span class="o">*</span><span class="n">c</span><span class="p">)</span> <span class="o">-</span> <span class="n">relu</span><span class="p">(</span><span class="n">n</span><span class="o">*</span><span class="n">x</span> <span class="o">-</span> <span class="n">n</span><span class="o">*</span><span class="n">c</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">relu</span><span class="p">(</span><span class="n">n</span><span class="o">*</span><span class="n">x</span> <span class="o">-</span> <span class="n">n</span><span class="o">*</span><span class="n">e</span><span class="p">)</span> <span class="o">-</span> <span class="n">relu</span><span class="p">(</span><span class="n">n</span><span class="o">*</span><span class="n">x</span> <span class="o">-</span> <span class="n">n</span><span class="o">*</span><span class="n">e</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">plot_t</span><span class="p">(</span><span class="n">c</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="mi">7</span><span class="p">):</span>
+    <span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;A 1d plot of the function $t^n$ from the proof above.&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">t</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="n">e</span><span class="p">),</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;t with $n=1$&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">t</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="n">e</span><span class="p">),</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;t with $n=2$&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">t</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mf">1e9</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">c</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="n">e</span><span class="p">),</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;t with $n=\infty$&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">vlines</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;c&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">vlines</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="s1">&#39;-.&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;e&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">plot_t</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<img alt="_images/e92baf60089949c76f00f5954ff8f940e5cc59920db22942a6ec9b5bdc57b178.png" src="_images/e92baf60089949c76f00f5954ff8f940e5cc59920db22942a6ec9b5bdc57b178.png" />
+</div>
+</div>
+</section>
+<section id="but-wait">
+<h2>But wait …<a class="headerlink" href="#but-wait" title="Permalink to this headline">#</a></h2>
+<p>Recalling the Stone-Weierstrass theorem.</p>
+<div class="proof theorem admonition" id="stone_weierstrass_thm">
+<p class="admonition-title"><span class="caption-number">Theorem 5 </span> (Stone-Weierstrass theorem)</p>
+<section class="theorem-content" id="proof-content">
+<p>Let <span class="math notranslate nohighlight">\(f:[a, b]\to\mathbb{R}\)</span> be a continuous function and <span class="math notranslate nohighlight">\(\epsilon &gt; 0\)</span>. Then there is a polynomial <span class="math notranslate nohighlight">\(p\)</span> such that</p>
+<div class="math notranslate nohighlight">
+\[\|f - p \|_\infty &lt; \epsilon.\]</div>
+</section>
+</div><p>So why don’t we simply use polynomials?</p>
+<figure class="align-default" id="id1">
+<a class="reference internal image-reference" href="_images/scale.png"><img alt="_images/scale.png" src="_images/scale.png" style="height: 400px;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 1 </span><span class="caption-text">Deep Learning: <a class="reference external" href="https://en.wikiquote.org/wiki/Shut_up_and_calculate">Shut up and compute</a>. See also “<a class="reference external" href="http://www.incompleteideas.net/IncIdeas/BitterLesson.html">The Bitter Lesson</a>”.</span><a class="headerlink" href="#id1" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="exercises">
+<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h2>
+<ul class="simple">
+<li><p>Think about an <span class="math notranslate nohighlight">\(n\)</span>-layer MLP. Why does Pinkus’s theorem preclude polynomials? I.e., why:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\mbox{activation-function} \in \mbox{polynomials} \Rightarrow \mbox{not universal approximator}?\]</div>
+<ul>
+<li><p>Write a function that takes in</p>
+<ul class="simple">
+<li><p>a three layer ReLU network as discussed above in the form of a <code class="docutils literal notranslate"><span class="pre">torch.nn.Sequential</span></code> object,</p></li>
+<li><p><span class="math notranslate nohighlight">\(d\)</span> and <span class="math notranslate nohighlight">\(e\)</span> in the form of tensors,</p></li>
+<li><p>and <span class="math notranslate nohighlight">\(n\)</span> as an integers.</p></li>
+</ul>
+<p>The function then returns the <code class="docutils literal notranslate"><span class="pre">torch.nn.Sequential</span></code> object with modified weights, such that the object represents <span class="math notranslate nohighlight">\(h_n\)</span> for the given <span class="math notranslate nohighlight">\(d\)</span>, <span class="math notranslate nohighlight">\(e\)</span>, and <span class="math notranslate nohighlight">\(n\)</span>.</p>
+</li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+            </article>
+            
+
+            
+            
+            <footer class="bd-footer-article">
+                <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+  <a class='left-prev' id="prev-link" href="00_the_mlp.html" title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+          <p class="prev-next-subtitle">previous</p>
+          <p class="prev-next-title">The multilayer perceptron</p>
+      </div>
+  </a>
+  <a class='right-next' id="next-link" href="02_deep_vs_shallow.html" title="next page">
+  <div class="prev-next-info">
+      <p class="prev-next-subtitle">next</p>
+      <p class="prev-next-title">Deep vs shallow</p>
+  </div>
+  <i class="fa-solid fa-angle-right"></i>
+  </a>
+</div>
+            </footer>
+            
+          </div>
+          
+          
+          
+            <div class="bd-sidebar-secondary bd-toc">
+              
+<div class="toc-item">
+  
+<div class="tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+</div>
+<nav id="bd-toc-nav" class="page-toc">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#two-famous-universal-approximation-theorems">
+   Two famous universal approximation theorems
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#a-one-dimensional-universal-approximation-theorem">
+   A one-dimensional universal approximation theorem
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#a-relu-universal-approximation-theorem">
+   A ReLU universal approximation theorem
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#but-wait">
+   But wait …
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#exercises">
+   Exercises
+  </a>
+ </li>
+</ul>
+
+</nav>
+</div>
+
+            </div>
+          
+          
+        </div>
+        <footer class="bd-footer-content">
+          <div class="bd-footer-content__inner">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Sören Dittmer
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+<p class="copyright">
+
+    &copy; Copyright 2022.<br>
+
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+Last updated on None.<br>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </div>
+        </footer>
+        
+
+      </main>
+    </div>
+  </div>
+
+  
+    
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=796348d33e8b1d947c94"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=796348d33e8b1d947c94"></script>
+
+  </body>
+</html>
