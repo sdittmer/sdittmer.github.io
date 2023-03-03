@@ -1,0 +1,1361 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Equivariance &amp; convolutional neural networks &#8212; A Primer on the Mathematical Foundations of Deep Learning</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+<link href="_static/styles/bootstrap.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=796348d33e8b1d947c94" rel="stylesheet">
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2">
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=4ec06e9971c5264fbd345897d5258098f11cc577" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=796348d33e8b1d947c94">
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=796348d33e8b1d947c94">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=8bf782fb4ee92b3d3646425e50f299c4e1fd152d"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '05_equivariance_and_cnns';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="The loss landscape: Normalization &amp; Residual Networks" href="06_loss_landscape_normalization_resnets.html" />
+    <link rel="prev" title="Invariance &amp; robustness" href="04_invariance_robustness.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="docsearch:language" content="None">
+  </head>
+  
+  
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="180" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  
+  <input type="checkbox" class="sidebar-toggle" name="__primary" id="__primary">
+  <label class="overlay overlay-primary" for="__primary"></label>
+
+  
+  <input type="checkbox" class="sidebar-toggle" name="__secondary" id="__secondary">
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+      
+<form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+    </div>
+  </div>
+
+  
+  <nav class="bd-header navbar navbar-expand-lg bd-navbar" id="navbar-main"><div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+      <span class="fa-solid fa-bars"></span>
+  </label>
+  <div id="navbar-start">
+    
+    
+  
+
+
+<a class="navbar-brand logo" href="intro.html">
+
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <img src="_static/logo.png" class="logo__image only-light" alt="Logo image">
+    <img src="_static/logo.png" class="logo__image only-dark" alt="Logo image">
+  
+  
+</a>
+    
+  </div>
+
+  
+  <div class="col-lg-9 navbar-header-items">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="00_the_mlp.html">
+                        The multilayer perceptron
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="01_mlp_universal_approx.html">
+                        The multilayer perceptron, a universal approximator
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="02_deep_vs_shallow.html">
+                        Deep vs shallow
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="03_sgd_and_bias_variance.html">
+                        SGD guarantees & the bias–variance trade-off
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="04_invariance_robustness.html">
+                        Invariance & robustness
+                      </a>
+                    </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="#">
+                        Equivariance & convolutional neural networks
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="06_loss_landscape_normalization_resnets.html">
+                        The loss landscape: Normalization & Residual Networks
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="07_input_convex_neural_nets.html">
+                        Input-convex neural networks
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="08_autoencoder.html">
+                        Autoencoders
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="09_variational_autoencoder.html">
+                        Variational autoencoders
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="10_GANs.html">
+                        Generative adversarial networks (GANs)
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="11_diffusion_models.html">
+                        Score-based models
+                      </a>
+                    </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+        <div class="navbar-end-item navbar-persistent--container">
+          
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+        </div>
+      
+      
+      <div class="navbar-end-item">
+        <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+</button>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+
+
+  
+  
+    <div class="navbar-persistent--mobile">
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
+</button>
+    </div>
+  
+
+  
+  <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+  </label>
+  
+
+</div>
+  </nav>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+      
+      <div class="navbar-center-item">
+        <nav class="navbar-nav">
+    <p class="sidebar-header-items__title" role="heading" aria-level="1" aria-label="Site Navigation">
+        Site Navigation
+    </p>
+    <ul id="navbar-main-elements" class="navbar-nav">
+        
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="00_the_mlp.html">
+                        The multilayer perceptron
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="01_mlp_universal_approx.html">
+                        The multilayer perceptron, a universal approximator
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="02_deep_vs_shallow.html">
+                        Deep vs shallow
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="03_sgd_and_bias_variance.html">
+                        SGD guarantees & the bias–variance trade-off
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="04_invariance_robustness.html">
+                        Invariance & robustness
+                      </a>
+                    </li>
+                
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="#">
+                        Equivariance & convolutional neural networks
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="06_loss_landscape_normalization_resnets.html">
+                        The loss landscape: Normalization & Residual Networks
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="07_input_convex_neural_nets.html">
+                        Input-convex neural networks
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="08_autoencoder.html">
+                        Autoencoders
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="09_variational_autoencoder.html">
+                        Variational autoencoders
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="10_GANs.html">
+                        Generative adversarial networks (GANs)
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="11_diffusion_models.html">
+                        Score-based models
+                      </a>
+                    </li>
+                
+                </div>
+            </div>
+            
+    </ul>
+</nav>
+      </div>
+      
+      </div>
+    
+
+    
+    
+    <div class="sidebar-header-items__end">
+      
+      <div class="navbar-end-item">
+        <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+</button>
+      </div>
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+      
+    </div>
+    
+  </div>
+
+  
+  <div class="sidebar-start-items sidebar-primary__section">
+    <div class="sidebar-start-items__item">
+  
+
+
+<a class="navbar-brand logo" href="intro.html">
+
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <img src="_static/logo.png" class="logo__image only-light" alt="Logo image">
+    <img src="_static/logo.png" class="logo__image only-dark" alt="Logo image">
+  
+  
+</a>
+    </div>
+    <div class="sidebar-start-items__item">
+<form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+    </div>
+    <div class="sidebar-start-items__item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    A Primer on the Mathematical Foundations of Deep Learning
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="00_the_mlp.html">The multilayer perceptron</a></li>
+<li class="toctree-l1"><a class="reference internal" href="01_mlp_universal_approx.html">The multilayer perceptron, a universal approximator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="02_deep_vs_shallow.html">Deep vs shallow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03_sgd_and_bias_variance.html">SGD guarantees &amp; the bias–variance trade-off</a></li>
+<li class="toctree-l1"><a class="reference internal" href="04_invariance_robustness.html">Invariance &amp; robustness</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Equivariance &amp; convolutional neural networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="06_loss_landscape_normalization_resnets.html">The loss landscape: Normalization &amp; Residual Networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="07_input_convex_neural_nets.html">Input-convex neural networks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="08_autoencoder.html">Autoencoders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="09_variational_autoencoder.html">Variational autoencoders</a></li>
+<li class="toctree-l1"><a class="reference internal" href="10_GANs.html">Generative adversarial networks (GANs)</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="11_diffusion_models.html">Score-based models</a></li>
+</ul>
+
+    </div>
+</nav>
+    </div>
+  </div>
+  
+
+  
+  <div class="sidebar-end-items sidebar-primary__section">
+    <div class="sidebar-end-items__item">
+    </div>
+  </div>
+
+  
+  <div id="rtd-footer-container"></div>
+
+      </div>
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+        <div class="bd-content">
+          <div class="bd-article-container">
+            
+            <div class="bd-header-article">
+                
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        <label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" data-toggle="tooltip" data-placement="right" title="Toggle primary sidebar">
+            <span class="fa-solid fa-bars"></span>
+        </label>
+    </div>
+    <div class="header-article__right">
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      <li><a href="https://colab.research.google.com/v2/gh/sdittmer/mathematical_foundations_of_deep_learning/master?urlpath=tree/docs/05_equivariance_and_cnns.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="btn__text-container">Binder</span>
+</a>
+</a>
+      
+  </ul>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      <li><a href="_sources/05_equivariance_and_cnns.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</a>
+      
+      <li>
+<button onclick="printPdf(this)"
+  class="btn btn-sm dropdown-item"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</a>
+      
+  </ul>
+</div>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary" data-toggle="tooltip" data-placement="left" title="Toggle secondary sidebar">
+            <span class="fa-solid fa-list"></span>
+        </label>
+    </div>
+</div>
+            </div>
+            
+            
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Equivariance & convolutional neural networks</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#what-is-equivariance">
+   What is equivariance?
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#how-to-get-equivariance">
+   How to get equivariance?
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#shift-equivariance">
+   Shift equivariance
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#shift-robustness">
+   Shift robustness
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#two-ways-to-get-shift-invariance-ignoring-boundary-effects">
+     Two ways to get shift invariance (ignoring boundary effects)
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#pooling">
+     Pooling
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#an-example-cnn-on-mnist">
+   An example CNN on MNIST
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#load-mnist">
+     Load MNIST
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#print-some-information-about-the-data">
+     Print some information about the data
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#setup-data-loaders">
+     Setup data loaders
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#setup-simple-cnn-and-training">
+     Setup simple CNN and training
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#run-training-and-plot-results">
+     Run training and plot results
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#exercises">
+   Exercises
+  </a>
+ </li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+            <article class="bd-article" role="main">
+              
+  <section class="tex2jax_ignore mathjax_ignore" id="equivariance-convolutional-neural-networks">
+<h1>Equivariance &amp; convolutional neural networks<a class="headerlink" href="#equivariance-convolutional-neural-networks" title="Permalink to this headline">#</a></h1>
+<p>Last lecture we asked whether we can prevent the model from doing something if we know it shouldn’t. This lecture we will try to explore the tool of equivariance to do the same.</p>
+<ul class="simple">
+<li><p>Together with robustness and invariance, we can use equivariance to get deep insides into many popular network architectures, e.g., Convolutional Networks and Graph Networks (including transformers).</p></li>
+</ul>
+<section id="what-is-equivariance">
+<h2>What is equivariance?<a class="headerlink" href="#what-is-equivariance" title="Permalink to this headline">#</a></h2>
+<div class="proof definition admonition" id="equivariance_def">
+<p class="admonition-title"><span class="caption-number">Definition 9 </span> (Equivariance)</p>
+<section class="definition-content" id="proof-content">
+<p>Let <span class="math notranslate nohighlight">\(G\)</span> be a group and</p>
+<div class="math notranslate nohighlight">
+\[f:X \to Y\]</div>
+<p>a mapping between vector spaces, e.g., a neural network.</p>
+<p>Further let <span class="math notranslate nohighlight">\(\rho_X\)</span> and <span class="math notranslate nohighlight">\(\rho_Y\)</span> be representations of <span class="math notranslate nohighlight">\(G\)</span> on <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span>.</p>
+<p>We call <span class="math notranslate nohighlight">\(f\)</span> equivariant (w.r.t. <span class="math notranslate nohighlight">\(\rho_X\)</span> and <span class="math notranslate nohighlight">\(\rho_Y\)</span>) if <span class="math notranslate nohighlight">\(f\)</span> commutes with the group actions, i.e.,</p>
+<div class="math notranslate nohighlight">
+\[f \circ \rho_X(g) = \rho_Y(g) \circ f \ \forall g \in G.\]</div>
+</section>
+</div><ul class="simple">
+<li><p>I.e., the output changes under the tranformations given by the representations in the same way as the input.</p></li>
+<li><p>E.g., if <span class="math notranslate nohighlight">\(G\)</span> is the group of rotations, the output rotates if the input does.</p></li>
+</ul>
+<div class="proof lemma admonition" id="invariance_equivariance_lemma">
+<p class="admonition-title"><span class="caption-number">Lemma 11 </span> (Connecting Invariance &amp; Equivariance)</p>
+<section class="lemma-content" id="proof-content">
+<p>Let <span class="math notranslate nohighlight">\(G\)</span> be a group and <span class="math notranslate nohighlight">\(f:X \to \mathbb{R}\)</span> a mapping.
+Further let <span class="math notranslate nohighlight">\(\rho\)</span> be an orthogonal representations of <span class="math notranslate nohighlight">\(G\)</span> on <span class="math notranslate nohighlight">\(X\)</span>.</p>
+<p>Then the gradient field <span class="math notranslate nohighlight">\(F=\nabla f:X\to X\)</span> is equivariant.</p>
+</section>
+</div><div class="dropdown admonition">
+<p class="admonition-title">Click for proof.</p>
+<div class="proof admonition" id="proof">
+<p>Proof. We have <span class="math notranslate nohighlight">\(f(\rho(g)x) = f(x)\)</span> and therefore also <span class="math notranslate nohighlight">\(F(x) = \rho(g)^TF(\rho(g)x)\)</span>.
+Since this implies <span class="math notranslate nohighlight">\({\rho(g)^T}^{'-1} F(x) = F(\rho(g)x)\)</span> we are done.</p>
+<p><span class="math notranslate nohighlight">\(\square\)</span></p>
+</div>
+</div>
+</section>
+<section id="how-to-get-equivariance">
+<h2>How to get equivariance?<a class="headerlink" href="#how-to-get-equivariance" title="Permalink to this headline">#</a></h2>
+<div class="proof lemma admonition" id="group_averaging_lemma">
+<p class="admonition-title"><span class="caption-number">Lemma 12 </span> (Group averaging)</p>
+<section class="lemma-content" id="proof-content">
+<p>Let <span class="math notranslate nohighlight">\(G\)</span> be a group and <span class="math notranslate nohighlight">\(f:X \to Y\)</span> a mapping between vector spaces.
+Further let <span class="math notranslate nohighlight">\(\rho_X\)</span> and <span class="math notranslate nohighlight">\(\rho_Y\)</span> be representations of <span class="math notranslate nohighlight">\(G\)</span> on <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span>.</p>
+<p>Then the mapping</p>
+<div class="math notranslate nohighlight">
+\[x \mapsto \frac{1}{|G|} \sum_{g\in G} \rho_Y(g^{-1})f(\rho_X(g)x)\]</div>
+<p>is called group averaging and is equivariant.</p>
+</section>
+</div><div class="dropdown admonition">
+<p class="admonition-title">Click for proof.</p>
+<div class="proof admonition" id="proof">
+<p>Proof. We calculate:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+ &amp; \frac{1}{|G|} \sum_{g\in G} \rho_Y(g^{-1})f(\rho_X(g)\rho_X(h)x) \\
+=&amp; \frac{1}{|G|} \sum_{g\in G} \rho_Y(g^{-1})f(\rho_X(gh)x) \\
+=&amp; \frac{1}{|G|} \sum_{a\in G} \rho_Y(ha^{-1})f(\rho_X(a)x) \\
+=&amp; \rho_Y(h) \frac{1}{|G|} \sum_{a\in G} \rho_Y(a^{-1})f(\rho_X(a)x)
+\end{aligned}
+\end{split}\]</div>
+<p><span class="math notranslate nohighlight">\(\square\)</span></p>
+</div>
+</div>
+<p>We will now investigate a more involved but often also more powerful approach to produce an equivariant linear mapping <span class="math notranslate nohighlight">\(\mathcal{K}:X\to Y\)</span>. We can then use this approach in a neural network layer <span class="math notranslate nohighlight">\(x\mapsto \phi(\mathcal{K}x + b)\)</span>, that are equivariant – assuming the bias <span class="math notranslate nohighlight">\(b\)</span> and the activation function <span class="math notranslate nohighlight">\(\phi\)</span> are such that they do not break the equivariance.</p>
+<div class="proof definition admonition" id="homogeneous_def">
+<p class="admonition-title"><span class="caption-number">Definition 10 </span> (<span class="math notranslate nohighlight">\(G\)</span>-homogeneous)</p>
+<section class="definition-content" id="proof-content">
+<p>Let <span class="math notranslate nohighlight">\(G\)</span> be a group with a representation <span class="math notranslate nohighlight">\(\rho\)</span> on a topological space <span class="math notranslate nohighlight">\(X\)</span>. We call <span class="math notranslate nohighlight">\(X\)</span> <span class="math notranslate nohighlight">\(G\)</span>-homogeneous if <span class="math notranslate nohighlight">\(G\)</span> can act transitively on it.
+I.e., for any two <span class="math notranslate nohighlight">\(x, y\in X\)</span> <span class="math notranslate nohighlight">\(\exists g\in G\)</span> such that <span class="math notranslate nohighlight">\(\rho(g)x = y.\)</span></p>
+</section>
+</div><div class="proof theorem admonition" id="group_conv_theorem">
+<p class="admonition-title"><span class="caption-number">Theorem 10 </span> (<span class="math notranslate nohighlight">\(G\)</span>-convolution is all you need (<a class="reference external" href="https://arxiv.org/pdf/1909.12057.pdf">Source</a>, <a class="reference external" href="https://arxiv.org/pdf/1802.03690.pdf">Source</a>))</p>
+<section class="theorem-content" id="proof-content">
+<p>Let</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{K}:L_2(X) \ni f \mapsto \int_X \tilde k(x, y)f(x) dx \in L_2(Y)\]</div>
+<p>be an integral operator between signals on <span class="math notranslate nohighlight">\(G\)</span>-homogeneous spaces <span class="math notranslate nohighlight">\(X\)</span> and <span class="math notranslate nohighlight">\(Y\)</span>. Let also <span class="math notranslate nohighlight">\(e\in Y\)</span> be some “origin element” and <span class="math notranslate nohighlight">\(\rho_Y(g_y)\)</span> an orthonormal representation of <span class="math notranslate nohighlight">\(g_y\in G\)</span> such that <span class="math notranslate nohighlight">\(\forall y\in Y\)</span> we have <span class="math notranslate nohighlight">\(y=\rho_Y(g_y)e\)</span>.</p>
+<p>Then <span class="math notranslate nohighlight">\(\mathcal{K}\)</span> is <span class="math notranslate nohighlight">\(G\)</span>-equivariant if(f)</p>
+<div class="math notranslate nohighlight">
+\[[\mathcal{K}f](y) = \int_X k(\rho_X(g_y^{-1})x) f(x) dx =: (k \ *_G f)(y)\]</div>
+<p>where <span class="math notranslate nohighlight">\(k:X\to \mathbb{R}\)</span> the <strong>kernel</strong> and <span class="math notranslate nohighlight">\(\rho_X\)</span> a representation on <span class="math notranslate nohighlight">\(X\)</span>.</p>
+<p>This is kind of map is called a <strong>group convolution</strong>.</p>
+</section>
+</div><div class="dropdown admonition">
+<p class="admonition-title">Click for proof.</p>
+<div class="proof admonition" id="proof">
+<p>Proof. We will only show the “if” not the “iff” as that direction is more involved and typically uses different versions of Schur’s lemma. I.e., we show that <span class="math notranslate nohighlight">\((k\ *_G f)(y)\)</span> is <span class="math notranslate nohighlight">\(G\)</span>-equivariant.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+ &amp; \int_X k\left(\rho_X(g_{y})^{-1}x\right) f(\rho_X(g)x) dx \\
+=&amp; \int_X k\left(\rho_X(g_{y})^{-1} \rho_X(g)x\right) f(\rho_X(g)\rho_X(g^{-1})x) |\det \rho_X(g^{-1})| dx \\
+=&amp;  \int_X k\left(\rho_X([gg_{y}]^{-1}) x\right) f(x) dx\\
+\end{aligned}
+\end{split}\]</div>
+<p><span class="math notranslate nohighlight">\(\square\)</span></p>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For the algebra lovers: If we consider the subgroup <span class="math notranslate nohighlight">\(H\)</span> given by <span class="math notranslate nohighlight">\(Y=G/H\)</span> such that <span class="math notranslate nohighlight">\(H=\mbox{Stabilizer}_G(e)\)</span>. Then the whole subgroup leaves <span class="math notranslate nohighlight">\(e\)</span> unchanged and we have</p>
+<div class="math notranslate nohighlight">
+\[k(x) = \frac{1}{|\det \rho_X(h)|} k(\rho_X(h^{-1})x) \ \forall h\in H.\]</div>
+</div>
+</section>
+<section id="shift-equivariance">
+<h2>Shift equivariance<a class="headerlink" href="#shift-equivariance" title="Permalink to this headline">#</a></h2>
+<p>Assume that you want a network that works on an image processing task – e.g., denoise – to also work on images where the content is shifted.</p>
+<div class="cell tag_hide-input docutils container">
+<details class="hide above-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell source</span>
+<span class="expanded">Hide code cell source</span>
+</summary>
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;matplotlib.font_manager&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">disabled</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xkcd</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">center_parameter</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">center_parameter</span>
+
+    <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">512</span><span class="p">,</span> <span class="mi">512</span><span class="p">))</span>
+    <span class="n">img</span><span class="p">[</span><span class="mi">512</span><span class="o">//</span><span class="n">f</span><span class="o">-</span><span class="mi">32</span> <span class="p">:</span> <span class="mi">512</span><span class="o">//</span><span class="n">f</span><span class="o">+</span><span class="mi">32</span><span class="p">,</span> <span class="mi">512</span><span class="o">//</span><span class="n">f</span><span class="o">-</span><span class="mi">32</span> <span class="p">:</span> <span class="mi">512</span><span class="o">//</span><span class="n">f</span><span class="o">+</span><span class="mi">32</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>
+
+    <span class="n">img_noisy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">img</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;noisy&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img_noisy</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">([])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">([])</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;clean&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">([])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">([])</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+<span class="n">plot</span><span class="p">(</span><span class="n">center_parameter</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">center_parameter</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details>
+<div class="cell_output docutils container">
+<img alt="_images/fa8b65492b58c0b3286147e43d49939415aca6352c2c91e39839453b99caefcf.png" src="_images/fa8b65492b58c0b3286147e43d49939415aca6352c2c91e39839453b99caefcf.png" />
+<img alt="_images/7d0337193dcd71bd33665f2c9fe9bdc684630f11e0637cbc0d45d69e73bea9da.png" src="_images/7d0337193dcd71bd33665f2c9fe9bdc684630f11e0637cbc0d45d69e73bea9da.png" />
+</div>
+</div>
+<p>This means we want our neural network to be shift equivariant. If we define a shift via the mapping</p>
+<div class="math notranslate nohighlight">
+\[\rho(y)f(x) = f(x - y)\]</div>
+<p>we get</p>
+<div class="math notranslate nohighlight">
+\[(k \ *_G f)(y) = \int_X k(y - x) f(x) dx =: (k * f)(y).\]</div>
+<p>This is the most popular group convolution which generally simply called convolution is denoted by “<span class="math notranslate nohighlight">\(*\)</span>” without a subscript.</p>
+<p>So if we want to create a shift equivariant neural networks, it makes sense to use convolutions. This leads us to Convolutional Neural Networks (CNNS), usually used on data with spacial structure (i.e., shifts make sense), most prominently images. CNNs are the result of restricting the linear parts of each layer</p>
+<div class="math notranslate nohighlight">
+\[x\mapsto \mathcal{K}x + b\]</div>
+<p>to be shift equivariant via using convolution. This has lead to the following definition of a CNN layer.</p>
+<p>We define a CNN layer as the mapping</p>
+<div class="math notranslate nohighlight">
+\[\mathbb{R}^{c_I \times m \times n}\ni (x_i)_{i=1}^{c_I} \mapsto K x := \left(b_j + \sum_{i=1}^{c_I} k_{i,j} * x_i\right)_{j=1}^{c_O} \in \mathbb{R}^{c_O\times \tilde m \times \tilde n}\]</div>
+<p>where <span class="math notranslate nohighlight">\(c_I\)</span> and <span class="math notranslate nohighlight">\(c_O\)</span> are the socalled the number of <strong>input channels</strong> and <strong>output channels</strong>. <span class="math notranslate nohighlight">\(m\)</span> and <span class="math notranslate nohighlight">\(n\)</span> are the <strong>height</strong> and <strong>width</strong> of the input image and <span class="math notranslate nohighlight">\(\tilde m\)</span> and <span class="math notranslate nohighlight">\(\tilde n\)</span> are the of the input image. Further <span class="math notranslate nohighlight">\(b_j\in\mathbb{R}\)</span>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In the finite &amp; discrete setting as above, the convolution operator runs into the problem that it has to deal with boundaries and, therefore, boundary effects. There are several ways one can deal with them. For simplicity, we will always assume that we deal with them using zero-padding. I.e., we assume that the out-of-range values are <span class="math notranslate nohighlight">\(0\)</span> and lead to <span class="math notranslate nohighlight">\(m = \tilde m\)</span> and <span class="math notranslate nohighlight">\(n = \tilde n\)</span>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In most deep learning frameworks, convolutional layers do not use convolutions but the cross-correlations. But since the cross-correlation is defined as</p>
+<div class="math notranslate nohighlight">
+\[\int_X k(x + y) f(x) dx,\]</div>
+<p>it is equivalent to convolution if one flips the kernel. Therefore it is irrelevant whether one uses convolutions or cross-correlations unless one works manually with the kernel, which in practice, one rarely does.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>One tends to avoids asymmetries caused by discretization by using kernels with an odd (non-even) width.</p>
+<figure class="align-default" id="id1">
+<a class="reference internal image-reference" href="_images/conv_and_padding.gif"><img alt="_images/conv_and_padding.gif" src="_images/conv_and_padding.gif" style="height: 300px;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 8 </span><span class="caption-text">2d-convolution with zero-padding. <a class="reference external" href="https://medium.com/&#64;draj0718/zero-padding-in-convolutional-neural-networks-bf1410438e99">Source.</a></span><a class="headerlink" href="#id1" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</section>
+<section id="shift-robustness">
+<h2>Shift robustness<a class="headerlink" href="#shift-robustness" title="Permalink to this headline">#</a></h2>
+<section id="two-ways-to-get-shift-invariance-ignoring-boundary-effects">
+<h3>Two ways to get shift invariance (ignoring boundary effects)<a class="headerlink" href="#two-ways-to-get-shift-invariance-ignoring-boundary-effects" title="Permalink to this headline">#</a></h3>
+<ul class="simple">
+<li><p>Goal: Be robust against shifts.</p></li>
+<li><p>It is often easier to think about invariance than robustness first.</p></li>
+<li><p>Up to boundary effect, these are simple functions invariant to shifts:</p>
+<ul>
+<li><p>Compute the maximal (pixel) value of the image.</p></li>
+<li><p>Compute the mean of the (pixel) values of the image.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="pooling">
+<h3>Pooling<a class="headerlink" href="#pooling" title="Permalink to this headline">#</a></h3>
+<p>The goal of pooling is to introduce shift robustness. It uses the same trick that we discussed above for invariance, but applies it to image patches.</p>
+<figure class="align-default" id="id2">
+<a class="reference internal image-reference" href="_images/max_pooling.png"><img alt="_images/max_pooling.png" src="_images/max_pooling.png" style="height: 300px;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 9 </span><span class="caption-text">Max pooling example. <a class="reference external" href="https://programmathically.com/what-is-pooling-in-a-convolutional-neural-network-cnn-pooling-layers-explained/">Source.</a></span><a class="headerlink" href="#id2" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="id3">
+<a class="reference internal image-reference" href="_images/mean_pooling.png"><img alt="_images/mean_pooling.png" src="_images/mean_pooling.png" style="height: 300px;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 10 </span><span class="caption-text">Mean pooling example. <a class="reference external" href="https://programmathically.com/what-is-pooling-in-a-convolutional-neural-network-cnn-pooling-layers-explained/">Source.</a></span><a class="headerlink" href="#id3" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+<p>Pooling is applied channelwise.</p>
+</section>
+</section>
+<section id="an-example-cnn-on-mnist">
+<h2>An example CNN on MNIST<a class="headerlink" href="#an-example-cnn-on-mnist" title="Permalink to this headline">#</a></h2>
+<section id="load-mnist">
+<h3>Load MNIST<a class="headerlink" href="#load-mnist" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">from</span> <span class="nn">torchvision.datasets</span> <span class="kn">import</span> <span class="n">MNIST</span>
+<span class="kn">from</span> <span class="nn">torchvision.transforms</span> <span class="kn">import</span> <span class="n">ToTensor</span>
+
+<span class="n">train_data</span> <span class="o">=</span> <span class="n">MNIST</span><span class="p">(</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="s1">&#39;datasets&#39;</span><span class="p">,</span>
+    <span class="n">train</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">ToTensor</span><span class="p">(),</span>
+    <span class="n">download</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">test_data</span> <span class="o">=</span> <span class="n">MNIST</span><span class="p">(</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="s1">&#39;datasets&#39;</span><span class="p">,</span>
+    <span class="n">train</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">ToTensor</span><span class="p">()</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="print-some-information-about-the-data">
+<h3>Print some information about the data<a class="headerlink" href="#print-some-information-about-the-data" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Training data shape: </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">train_data</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test data shape: </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">test_data</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;A training sample with the label </span><span class="si">{</span><span class="n">train_data</span><span class="o">.</span><span class="n">targets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">train_data</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Histogram of training labels.&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">train_data</span><span class="o">.</span><span class="n">targets</span><span class="p">),</span> <span class="n">bins</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Histogram of test labels.&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">test_data</span><span class="o">.</span><span class="n">targets</span><span class="p">),</span> <span class="n">bins</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Training data shape: (60000, 28, 28)
+Test data shape: (10000, 28, 28)
+</pre></div>
+</div>
+<img alt="_images/c7c57b344ca1852615fddceb2f7e3214a865e52c48210d64e7bcc06429ca4cda.png" src="_images/c7c57b344ca1852615fddceb2f7e3214a865e52c48210d64e7bcc06429ca4cda.png" />
+</div>
+</div>
+</section>
+<section id="setup-data-loaders">
+<h3>Setup data loaders<a class="headerlink" href="#setup-data-loaders" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">128</span>
+
+<span class="n">data_loader_train</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
+    <span class="n">train_data</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+    <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">data_loader_test</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
+    <span class="n">test_data</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+    <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="setup-simple-cnn-and-training">
+<h3>Setup simple CNN and training<a class="headerlink" href="#setup-simple-cnn-and-training" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">SimpleCNN</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv0</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span>
+            <span class="n">in_channels</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">out_channels</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+            <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span>
+            <span class="n">in_channels</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+            <span class="n">out_channels</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+            <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">conv2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span>
+            <span class="n">in_channels</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+            <span class="n">out_channels</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+            <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pool</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">MaxPool2d</span><span class="p">(</span><span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">flatten</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Flatten</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dense</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">512</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">relu</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">softmax</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Softmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conv0</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conv1</span><span class="p">(</span><span class="n">z</span><span class="p">)))</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conv2</span><span class="p">(</span><span class="n">z</span><span class="p">)))</span>
+
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dense</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="mi">10</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="si">=}</span><span class="s2">&quot;</span>
+        <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span> <span class="s2">&quot;Softmax did not normalize correctly.&quot;</span>
+        <span class="k">return</span> <span class="n">y</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">SimpleCNN</span><span class="p">()</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="run-training-and-plot-results">
+<h3>Run training and plot results<a class="headerlink" href="#run-training-and-plot-results" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n_epochs</span> <span class="o">=</span> <span class="mi">5</span>
+
+<span class="n">train_losses</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">test_losses</span> <span class="o">=</span> <span class="p">[]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
+
+<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_epochs</span><span class="p">):</span>
+
+    <span class="n">train_losses_epoch</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">test_losses_epoch</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">images</span><span class="p">,</span> <span class="n">labels</span> <span class="ow">in</span> <span class="n">data_loader_train</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">images</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="si">=}</span><span class="s2">&quot;</span>
+        <span class="k">assert</span> <span class="n">labels</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">),),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">images</span><span class="o">.</span><span class="n">shape</span><span class="si">=}</span><span class="s2">, </span><span class="si">{</span><span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="si">=}</span><span class="s2">&quot;</span>
+        <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">images</span><span class="p">)</span> <span class="ow">and</span> <span class="n">torch</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">images</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">preditions</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">preditions</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+        <span class="n">train_losses_epoch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+    <span class="n">train_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">train_losses_epoch</span><span class="p">))</span>
+
+
+    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">images</span><span class="p">,</span> <span class="n">labels</span> <span class="ow">in</span> <span class="n">data_loader_test</span><span class="p">:</span>
+        <span class="n">preditions</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">preditions</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+        <span class="n">test_losses_epoch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+
+    <span class="n">test_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">test_losses_epoch</span><span class="p">))</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Epoch </span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2">&#39;s train and test loss: </span><span class="si">{</span><span class="n">train_losses</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">test_losses</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 0&#39;s train and test loss: 1.761, 1.675.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 1&#39;s train and test loss: 1.673, 1.668.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 2&#39;s train and test loss: 1.605, 1.572.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 3&#39;s train and test loss: 1.572, 1.567.
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Epoch 4&#39;s train and test loss: 1.569, 1.567.
+CPU times: user 8min 17s, sys: 31.5 s, total: 8min 49s
+Wall time: 1min 6s
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">train_losses</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;training&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">test_losses</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;epoch&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;mean BCE loss&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span><span class="o">.</span><span class="n">set_size_inches</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/b7ed0801027031870dbee6cf28fb673599a8e8c973ad3f80849101234aa455a8.png" src="_images/b7ed0801027031870dbee6cf28fb673599a8e8c973ad3f80849101234aa455a8.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="exercises">
+<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h2>
+<ul class="simple">
+<li><p>Try to find an MLP with maximal accuracy on MNIST. Try to find a CNN with maximal accuracy on MNIST.</p></li>
+<li><p>Think about why in the training above the training loss is higher then the test loss? Hint: the code is “problematic” if you only train for a few epochs – like we did.</p></li>
+<li><p>Think about why aliasing could be a problem for pooling in the context of equivariance (even ignoring boundary effects)? Hint: Read about the Nyquist–Shannon sampling theorem.</p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+            </article>
+            
+
+            
+            
+            <footer class="bd-footer-article">
+                <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+  <a class='left-prev' id="prev-link" href="04_invariance_robustness.html" title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+          <p class="prev-next-subtitle">previous</p>
+          <p class="prev-next-title">Invariance &amp; robustness</p>
+      </div>
+  </a>
+  <a class='right-next' id="next-link" href="06_loss_landscape_normalization_resnets.html" title="next page">
+  <div class="prev-next-info">
+      <p class="prev-next-subtitle">next</p>
+      <p class="prev-next-title">The loss landscape: Normalization &amp; Residual Networks</p>
+  </div>
+  <i class="fa-solid fa-angle-right"></i>
+  </a>
+</div>
+            </footer>
+            
+          </div>
+          
+          
+          
+            <div class="bd-sidebar-secondary bd-toc">
+              
+<div class="toc-item">
+  
+<div class="tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+</div>
+<nav id="bd-toc-nav" class="page-toc">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#what-is-equivariance">
+   What is equivariance?
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#how-to-get-equivariance">
+   How to get equivariance?
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#shift-equivariance">
+   Shift equivariance
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#shift-robustness">
+   Shift robustness
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#two-ways-to-get-shift-invariance-ignoring-boundary-effects">
+     Two ways to get shift invariance (ignoring boundary effects)
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#pooling">
+     Pooling
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#an-example-cnn-on-mnist">
+   An example CNN on MNIST
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#load-mnist">
+     Load MNIST
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#print-some-information-about-the-data">
+     Print some information about the data
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#setup-data-loaders">
+     Setup data loaders
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#setup-simple-cnn-and-training">
+     Setup simple CNN and training
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#run-training-and-plot-results">
+     Run training and plot results
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#exercises">
+   Exercises
+  </a>
+ </li>
+</ul>
+
+</nav>
+</div>
+
+            </div>
+          
+          
+        </div>
+        <footer class="bd-footer-content">
+          <div class="bd-footer-content__inner">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Sören Dittmer
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+<p class="copyright">
+
+    &copy; Copyright 2022.<br>
+
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+Last updated on None.<br>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </div>
+        </footer>
+        
+
+      </main>
+    </div>
+  </div>
+
+  
+    
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=796348d33e8b1d947c94"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=796348d33e8b1d947c94"></script>
+
+  </body>
+</html>

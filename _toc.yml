@@ -1,0 +1,18 @@
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: intro
+chapters:
+    - file: 00_the_mlp
+    - file: 01_mlp_universal_approx
+    - file: 02_deep_vs_shallow
+    - file: 03_sgd_and_bias_variance
+    - file: 04_invariance_robustness
+    - file: 05_equivariance_and_cnns
+    - file: 06_loss_landscape_normalization_resnets
+    - file: 07_input_convex_neural_nets
+    - file: 08_autoencoder
+    - file: 09_variational_autoencoder
+    - file: 10_GANs
+    - file: 11_diffusion_models
